@@ -3,6 +3,8 @@
 [MyBatis-Github](https://github.com/mybatis)  
 [org.mybatis:mybatis:3.4.6](https://search.maven.org/artifact/org.mybatis/mybatis/3.4.6/jar)  
 [org.mybatis.spring.boot:mybatis-spring-boot-starter:1.3.2](https://search.maven.org/search?q=g:org.mybatis.spring.boot)  
+[MyBatis Configuration XML：配置文件参考](http://www.mybatis.org/mybatis-3/zh/configuration.html)  
+[MyBatis SqlMapper XML：映射文件参考](http://www.mybatis.org/mybatis-3/zh/sqlmap-xml.html)  
 
 |作者|Mutistic|
 |---|---|

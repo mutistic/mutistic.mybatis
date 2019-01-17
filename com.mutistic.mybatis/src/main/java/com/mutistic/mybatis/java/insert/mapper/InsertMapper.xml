@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!-- Mybatis 3 mapper DTD规范 -->
+<!DOCTYPE mapper 
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper
+	namespace="com.mutistic.mybatis.java.insert.mapper.InsertMapper">
+
+	<!-- 定义可重用的 SQL 代码段，可以包含在其他语句中 -->
+	<sql id="column">
+		id_, user_id, consignee_name, consignee_mobile,
+		consignee_address,
+		province_code, city_code, county_code, is_default,
+		create_by, create_time, update_by, update_time,
+		remark_, enable_, version_no
+	</sql>
+
+	<!-- 插入静态数据 -->
+	<insert id="insertByStatic" parameterType="BizBuyAddress">
+		INSERT INTO biz_buy_address (
+			<include refid="column"></include>
+		) VALUES (
+			UNIX_TIMESTAMP(NOW()), '1029209400357347330', '张三',
+			'13100000000', '地址', '210000', '210700', '210781', '1',
+			'1029209267859283970', '2018-08-14 11:55:45',
+			'1029209267859283970', '2018-08-14 11:55:45',
+			'', '0', '0'
+		)
+	</insert>
+
+	<!-- 插入动态数据 -->
+	<insert id="insertByDynamic" parameterType="BizBuyAddress">
+		INSERT INTO biz_buy_address (
+			<include refid="column"></include>
+		) VALUES (
+			#{id},#{userId}, #{consigneeName}, #{consigneeMobile}, #{consigneeAddress},
+			#{provinceCode}, #{cityCode}, #{countyCode}, #{isDefault},
+			#{createBy}, #{createTime}, #{updateBy}, #{updateTime},
+			#{remark}, #{enable}, #{versionNo}
+		)
+	</insert>
+
+</mapper>
+  
