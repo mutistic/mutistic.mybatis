@@ -3,8 +3,6 @@
 [MyBatis-Github](https://github.com/mybatis)  
 [org.mybatis:mybatis:3.4.6](https://search.maven.org/artifact/org.mybatis/mybatis/3.4.6/jar)  
 [org.mybatis.spring.boot:mybatis-spring-boot-starter:1.3.2](https://search.maven.org/search?q=g:org.mybatis.spring.boot)  
-[MyBatis Configuration XML：配置文件参考](http://www.mybatis.org/mybatis-3/zh/configuration.html)  
-[MyBatis SqlMapper XML：映射文件参考](http://www.mybatis.org/mybatis-3/zh/sqlmap-xml.html)  
 
 |作者|Mutistic|
 |---|---|
@@ -13,10 +11,15 @@
 ---
 ### <a id="a_catalogue">目录</a>：
 1. <a href="#a_mybatis">MyBatis：对象关系映射框架</a>
+2. <a href="#a_xml">MyBatis相关配置</a>
+3. <a href="#a_insert">MyBatis新增数据</a>
+4. <a href="#a_select">MyBatis查询数据</a>
+98. <a href="#a_notes">Notes</a>
+99. <a href="#a_down">down</a>
 
 
 ---
-### <a id="a_mybatis">一、MyBatis：对象关系映射框架：</a> <a href="#a_catalogue">last</a> <a href="#a_nosql">next</a>
+### <a id="a_mybatis">一、MyBatis：对象关系映射框架：</a> <a href="#a_catalogue">last</a> <a href="#a_xml">next</a>
 一、什么是MyBatis：
 ```
   MyBatis 本是apache的一个开源项目iBatis, 2010年这个项目由apache software foundation 迁移到了google code，并且改名为MyBatis 。2013年11月迁移到Github。
@@ -84,3 +87,631 @@ Mybatis会根据SQL的ID找到对应的MappedStatement，然后根据传入参�
 动态SQL元素对于任何使用过JSTL或者类似于XML之类的文本处理器的人来说，都是非常熟悉的。在上一版本中，需要了解和学习非常多的元素，
 但在MyBatis 3 中有了许多的改进，现在只剩下差不多二分之一的元素。MyBatis使用了基于强大的OGNL表达式来消除了大部分元素
 ```
+
+---
+### <a id="a_xml">二、MyBatis相关配置：</a> <a href="#a_mybatis">last</a> <a href="#a_insert">next</a>
+jdbc.properties：
+```properties
+## jdbc驱动：使用mysql驱动
+jdbc.driverClassName=com.mysql.jdbc.Driver
+##  jdbc url
+jdbc.url=jdbc:mysql://127.0.0.1:3306/mybatis?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false
+##  jdbc 用户名
+jdbc.username=root
+##  jdbc 密码
+jdbc.password=root
+```
+mybatis-config.xml：
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Mybatis 3 configuration DTD规范 -->
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<!-- configuration：配置文件的根标签 -->
+<configuration>
+	<!-- Mybatis配置文件参考：http://www.mybatis.org/mybatis-3/zh/configuration.html -->
+
+	<!-- properties：属性都是可外部配置且可动态替换的，既可以在典型的 Java 属性文件中配置，亦可通过 properties 元素的子元素来传递 -->
+	<properties
+		resource="com/mutistic/mybatis/java/resources/jdbc.properties">
+		<!-- <property name="username" value="dev_user" /> -->
+	</properties>
+
+	<!-- typeAliases：类型别名是为 Java 类型设置一个短的名字。它只和 XML 配置有关，存在的意义仅在于用来减少类完全限定名的冗余 -->
+	<typeAliases>
+		<typeAlias alias="BizBuyAddress"
+			type="com.mutistic.mybatis.java.model.BizBuyAddress" />
+	</typeAliases>
+
+	<!-- environments：配置环境，MyBatis 可以配置成适应多种环境，这种机制有助于将 SQL 映射应用于多种数据库之中 -->
+	<environments default="development">
+		<environment id="development">
+			<transactionManager type="JDBC">
+			</transactionManager>
+			<dataSource type="POOLED">
+				<property name="driver" value="${jdbc.driverClassName}" />
+				<property name="url" value="${jdbc.url}" />
+				<property name="username" value="${jdbc.username}" />
+				<property name="password" value="${jdbc.password}" />
+			</dataSource>
+		</environment>
+	</environments>
+
+	<!-- mappers：映射器，定义 SQL 映射语句，使用相对于类路径的资源引用， 或完全限定资源定位符（包括 file:/// 的 URL），或类名和包名 -->
+	<mappers>
+		<mapper resource="com/mutistic/mybatis/java/insert/mapper/InsertMapper.xml" />
+		<mapper class="com.mutistic.mybatis.java.select.mapper.SelectMapper" />
+	</mappers>
+</configuration>
+```
+ResourcesTest.java：
+```Java
+package com.mutistic.mybatis.java.resources;
+// 资源文件定位类
+public class ResourcesTest { }
+```
+FileUtil.java：
+```Java
+package com.mutistic.mybatis.utils;
+import com.mutistic.mybatis.java.insert.mapper.InsertMapper;
+// 文件工具类 
+public class FileUtil {
+	public static void main(String[] args) {
+		showURLPath("InsertMapper.xml", InsertMapper.class);
+	}
+	
+	/**
+	 * 打印当前资源的URL路径 
+	 * @param fileName 文件名
+	 */
+	public static void showURLPath(String fileName, Class<?> classType) {
+		if(fileName == null) {
+			fileName = "";
+		}
+		if(classType == null) {
+			classType = FileUtil.class;
+		}
+		
+		PrintUtil.two("1、通过Thread获取classes的路径：", Thread.currentThread().getContextClassLoader().getResource(""));
+		PrintUtil.two("2、通过ClassLoader获取classes的路径：", ClassLoader.getSystemResource(""));
+		PrintUtil.two("3、获取当前Class的classes的路径：[classType=" + classType.getName()+"]", classType.getClassLoader().getResource(""));
+		PrintUtil.two("4、获取当前Class下的classes的路径：", classType.getResource("/"));
+		PrintUtil.two("5、获取当前Class下的资源的目录路径：", classType.getResource(fileName));
+		PrintUtil.two("6、获取当前Class下的资源的classes路径：", classType.getResource(fileName));
+		PrintUtil.two("7、通过System获取项目路径：", System.getProperty("user.dir"));
+	}
+}
+```
+
+---
+### <a id="a_insert">三、MyBatis新增数据：</a> <a href="#a_xml">last</a> <a href="#a_select">next</a>
+SqlSeesionUtil.java：
+```Java
+package com.mutistic.mybatis.java.utils;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import com.mutistic.mybatis.java.resources.ResourcesTest;
+import com.mutistic.mybatis.java.select.mapper.SelectMapper;
+import com.mutistic.mybatis.utils.PrintUtil;
+// SqlSession 数据库会话工具类
+public class SqlSeesionUtil {
+	/** Mybatis Config 配置文件名称 */
+	private final static String MYBATIS_CONFIG_XML = "mybatis-config.xml";
+	/** SqlSessionFactory工厂类 */
+	private static SqlSessionFactory sqlSessionFactory;
+	/** SqlSession数据库会话 */
+	private static SqlSession sqlSession;
+	//  创建SqlSessionFactory工厂类
+	public static SqlSessionFactory getSqlSessionFactory() {
+		try {
+			if (sqlSessionFactory == null) {
+				System.out.println(ResourcesTest.class.getResourceAsStream(MYBATIS_CONFIG_XML).getClass());
+				
+				sqlSessionFactory = new SqlSessionFactoryBuilder()
+						.build(ResourcesTest.class.getResourceAsStream(MYBATIS_CONFIG_XML));
+				
+				PrintUtil.one("0、创建SqlSessionFactory工厂类：");
+				PrintUtil.two("0.1、Mybatis Config 配置文件名称及路径", "xmlName=" + MYBATIS_CONFIG_XML + ", xmlURL="
+						+ ResourcesTest.class.getResource(MYBATIS_CONFIG_XML).getPath());
+				PrintUtil.two("0.2、通过SqlSessionFactoryBuilder创建工厂类", "sqlSessionFactory=" + sqlSessionFactory);
+			}
+		} catch (Exception e) {
+			PrintUtil.err("0.e、创建数据库会话出现异常，打印堆栈信息：" + e.getMessage());
+		}
+		return sqlSessionFactory;
+	}
+	// 创建SqlSession数据库会话
+	public static SqlSession openSession() {
+		if (null == sqlSessionFactory) {
+			getSqlSessionFactory();
+		}
+		if(null == sqlSession) {
+			try {
+				sqlSession = sqlSessionFactory.openSession();
+				
+				PrintUtil.two("0.3、通过SqlSessionFactory.openSession()：创建数据库会话", "SqlSession=" + sqlSession);
+			} catch (Exception e) {
+				PrintUtil.err("0.3.e、创建数据库会话出现异常，打印堆栈信息：" + e.getMessage());
+			}
+		}
+
+		return sqlSession;
+	}
+	// 获取MapperClass实例对象
+	public static <T> T getMapper(Class<T> mapperClass) {
+		T mapper = null;
+		try {
+			mapper = openSession().getMapper(mapperClass);
+			
+			PrintUtil.two("0.4、通过SqlSession.getMapper(Class<T> type)：获取MapperClass实例对象", "MapperClass=" + mapper);
+		} catch (Exception e) {
+			PrintUtil.err("0.4.e、获取MapperClass实例对象出现异常，打印堆栈信息：" + e.getMessage());
+		}
+		return mapper;
+	}
+	// 提交SqlSeession 
+	public static void commit() {
+		try {
+			if(null != sqlSession) {
+				PrintUtil.two("0.5、提交SqlSeession", null);
+				sqlSession.commit();
+			}
+		} catch (Exception e) {
+			PrintUtil.err("0.5.e、提交SqlSeession出现异常，打印堆栈信息：" + e.getMessage());
+		}
+	}
+	// 关闭SqlSeession 
+	public static void close() {
+		try {
+			if(null != sqlSession) {
+				PrintUtil.one("0.6、关闭SqlSeession");
+				sqlSession.close();
+			}
+		} catch (Exception e) {
+			PrintUtil.err("0.6.e、关闭SqlSeession出现异常，打印堆栈信息：" + e.getMessage());
+		}
+	}
+	
+	public static void main(String[] args) {
+		getMapper(SelectMapper.class);
+	}
+}
+```
+BaseModel.java：
+```Java
+package com.mutistic.mybatis.java.model;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+// Model父类 
+@SuppressWarnings("serial")
+public class BaseModel implements Serializable {
+	/** 主键 */
+	private Long id;
+	/** 主键集合 */
+	private List<Long> ids;
+	/** 创建人 */
+	private Long createBy;
+	/** 创建时间 */
+	private Date createTime;
+	/** 修改人 */
+	private Long updateBy;
+	/** 修改时间 */
+	private Date updateTime;
+	/** 是否逻辑删除：0-未删除，1-已删除 */
+	private Integer enable;
+	/** 备注 */
+	private String remark;
+	/**  版本号 */
+	private Integer versionNo;
+	/** 排序字段 */
+	private String orderBy;
+	/** 排序规则 */
+	private String sortAsc;
+	// ...
+}
+```
+BizBuyAddress.java：
+```Java
+package com.mutistic.mybatis.java.model;
+// 收货地址 
+@SuppressWarnings("serial")
+public class BizBuyAddress extends BaseModel {
+	/** 用户ID */
+	private Long userId;
+	/** 收货人 */
+	private String consigneeName;
+	/** 收货手机号 */
+	private String consigneeMobile;
+	/** 收货地址 */
+	private String consigneeAddress;
+	/** 省份编码 */
+	private String provinceCode;
+	/** 城市编码 */
+	private String cityCode;
+	/** 区县编码 */
+	private String countyCode;
+	/** 是否默认地址：0-非默认，1-默认 */
+	private Integer isDefault;
+	// ...
+}
+```
+InsertMapper.java：
+```Java
+package com.mutistic.mybatis.java.insert.mapper;
+import com.mutistic.mybatis.java.model.BizBuyAddress;
+// InsertMapper 接口
+public interface InsertMapper {
+	// 新增静态数据
+	Long insertByStatic();
+	// 新增动态数据 
+	Long insertByDynamic(BizBuyAddress entity);
+}
+```
+InsertMapper.xml：
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!-- Mybatis 3 mapper DTD规范 -->
+<!DOCTYPE mapper 
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- mappper：Mapper XML的根标签 -->
+<mapper namespace="com.mutistic.mybatis.java.insert.mapper.InsertMapper">
+	<!-- Mapper XML参考：http://www.mybatis.org/mybatis-3/zh/sqlmap-xml.html-->
+	
+	<!-- 定义可重用的 SQL 代码段，可以包含在其他语句中 -->
+	<sql id="column">
+		id_, user_id, consignee_name, consignee_mobile,
+		consignee_address,
+		province_code, city_code, county_code, is_default,
+		create_by, create_time, update_by, update_time,
+		remark_, enable_, version_no
+	</sql>
+	
+	<!-- 插入静态数据 -->
+	<insert id="insertByStatic" parameterType="com.mutistic.mybatis.java.model.BizBuyAddress">
+		INSERT INTO biz_buy_address (
+			<include refid="column"></include>
+		) VALUES (
+			UNIX_TIMESTAMP(NOW()), '1029209400357347330', '张三',
+			'13100000000', '地址', '210000', '210700', '210781', '1',
+			'1029209267859283970', '2018-08-14 11:55:45',
+			'1029209267859283970', '2018-08-14 11:55:45',
+			'', '0', '0'
+		)
+	</insert>
+	
+	<!-- 插入动态数据 -->
+	<insert id="insertByDynamic" parameterType="BizBuyAddress">
+		INSERT INTO biz_buy_address (
+			<include refid="column"></include>
+		) VALUES (
+			#{id},#{userId}, #{consigneeName}, #{consigneeMobile}, #{consigneeAddress},
+			#{provinceCode}, #{cityCode}, #{countyCode}, #{isDefault},
+			#{createBy}, #{createTime}, #{updateBy}, #{updateTime},
+			#{remark}, #{enable}, #{versionNo}
+		)
+	</insert>
+</mapper>
+```
+InsertMain.java：
+```Java
+package com.mutistic.mybatis.java.insert;
+import java.util.Date;
+import com.mutistic.mybatis.java.insert.mapper.InsertMapper;
+import com.mutistic.mybatis.java.model.BizBuyAddress;
+import com.mutistic.mybatis.java.utils.SqlSeesionUtil;
+import com.mutistic.mybatis.utils.PrintUtil;
+// MyBatis新增数据
+public class InsertMain {
+	public static void main(String[] args) {
+		InsertMapper mapper = SqlSeesionUtil.getMapper(InsertMapper.class);
+
+		PrintUtil.one("1、MyBatis新增数据");
+		showByStatic(mapper);
+		showByDynamic(mapper);
+
+		SqlSeesionUtil.close();
+	}
+	private static void showByStatic(InsertMapper mapper) {
+		PrintUtil.one("2、新增静态数据");
+
+		Long result = mapper.insertByStatic();
+		SqlSeesionUtil.commit();
+		PrintUtil.two("2.1、新增静态数据结果：", "result=" + result);
+	}
+	private static void showByDynamic(InsertMapper mapper) {
+		PrintUtil.one("3、新增动态数据：");
+
+		BizBuyAddress entity = new BizBuyAddress();
+		entity.setId(System.currentTimeMillis());
+		entity.setCityCode("210700");
+		entity.setConsigneeAddress("testAddress");
+		entity.setConsigneeMobile("13600000000");
+		entity.setConsigneeName("test");
+		entity.setCountyCode("210781");
+		entity.setCreateBy(99999l);
+		entity.setCreateTime(new Date());
+		entity.setEnable(0);
+		entity.setIsDefault(1);
+		entity.setProvinceCode("210000");
+		entity.setRemark("testRemark");
+		entity.setUpdateBy(entity.getCreateBy());
+		entity.setUpdateTime(entity.getCreateTime());
+		entity.setUserId(111111l);
+		entity.setVersionNo(0);
+
+		PrintUtil.two("3.1、准备动态数据：", "entity=" + entity);
+		Long result2 = mapper.insertByDynamic(entity);
+		SqlSeesionUtil.commit();
+		PrintUtil.two("3.2、新增动态数据结果：", "result=" + result2);
+	}
+}
+```
+
+---
+### <a id="a_select">四、MyBatis查询数据：</a> <a href="#a_insert">last</a> <a href="#">next</a>
+Pagination.java：
+```Java
+package com.mutistic.mybatis.java.model;
+import java.io.Serializable;
+import java.util.List;
+// 分页对象
+@SuppressWarnings("serial")
+public class Pagination<T> implements Serializable {
+	/** 总条数 */
+	private Long total;
+	/** 总页数 */
+	private Integer current;
+	/** 当前页条数 */
+	private Integer size;
+	/** 当前页 */
+	private Integer pages;
+	/** 当前页数据 */
+	private List<T> records;
+	// ...
+}
+```
+SelectMapper.java：
+```Java
+package com.mutistic.mybatis.java.select.mapper;
+import java.util.List;
+import java.util.Map;
+import com.mutistic.mybatis.java.model.BizBuyAddress;
+// SelectMapper 接口
+public interface SelectMapper {
+	// 根据ID查询数据
+	BizBuyAddress queryById(Long id);
+	// 根据实体查询集合
+	List<BizBuyAddress> queryList(BizBuyAddress param);
+	// 分页查询-查询总条数
+	List<Long> selectCount(Map<String, Object> params);
+	// 分页查询-查询当前内容数
+	List<BizBuyAddress> queryPage(Map<String, Object> params);
+}
+```
+SelectMapper.xml：
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Mybatis 3 mapper DTD规范 -->
+<!DOCTYPE mapper 
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mutistic.mybatis.java.select.mapper.SelectMapper">
+	<!-- 映射结果集 -->
+	<resultMap id="resultMap" type="BizBuyAddress">
+		<id column="id_" property="id" />
+		<result column="user_id" property="userId" />
+		<result column="consignee_name" property="consigneeName" />
+		<result column="consignee_mobile" property="consigneeMobile" />
+		<result column="consignee_address" property="consigneeAddress" />
+		<result column="province_code" property="cityCode" />
+		<result column="city_code" property="cityCode" />
+		<result column="county_code" property="countyCode" />
+		<result column="is_default" property="isDefault" />
+		<result column="create_by" property="createBy" />
+		<result column="create_time" property="createTime" />
+		<result column="update_by" property="updateBy" />
+		<result column="update_time" property="updateTime" />
+		<result column="remark_" property="remark" />
+		<result column="enable_" property="enable" />
+		<result column="version_no" property="versionNo" />
+	</resultMap>
+
+	<!-- 定义可重用的 SQL 代码段，可以包含在其他语句中 -->
+	<sql id="entityColumn">
+		id_, user_id, consignee_name, consignee_mobile, consignee_address,
+		province_code, city_code, county_code, is_default,
+		create_by, create_time, update_by, update_time,
+		remark_, enable_, version_no
+	</sql>
+	<!-- 实体动态条件 -->
+	<sql id="entityIf">
+		<if test="id != null">
+			AND id_ = #{id}
+		</if>
+		<if test="ids != null and !ids.isEmpty()">
+			<!-- <if test="ids != null and ids.size() > 0"> -->
+			AND id_ IN
+			<foreach collection="ids" item="key" separator="," open="("
+				close=")">
+				${key}
+			</foreach>
+		</if>
+		<if test="userId != null">
+			AND user_id = #{userId}
+		</if>
+		<if test="consigneeName != null and consigneeName != ''">
+			AND consignee_name = #{consigneeName}
+		</if>
+		<if test="consigneeMobile != null and consigneeMobile != ''">
+			AND consignee_mobile = #{consigneeMobile}
+		</if>
+		<if test="consigneeAddress != null and consigneeAddress != ''">
+			AND consignee_address = #{consigneeAddress}
+		</if>
+		<if test="provinceCode != null and provinceCode != ''">
+			AND province_code = #{provinceCode}
+		</if>
+		<if test="cityCode != null and cityCode != ''">
+			AND city_code = #{cityCode}
+		</if>
+		<if test="countyCode != null and countyCode != ''">
+			AND county_code = #{countyCode}
+		</if>
+		<if test="isDefault != null"> AND is_default = #{isDefault}
+		</if>
+		<if test="createBy != null">
+			AND create_by = #{createBy}
+		</if>
+		<if test="createTime != null">
+			AND create_time = #{createTime}
+		</if>
+		<if test="updateBy != null">
+			AND update_by = #{updateBy}
+		</if>
+		<if test="updateTime != null">
+			AND update_time = #{updateTime}
+		</if>
+		<if test="remark != null and remark != ''">
+			AND remark_ = #{remark}
+		</if>
+		<if test="enable != null">
+			AND enable_ = #{enable}
+		</if>
+		<if test="versionNo != null">
+			AND version_no = #{versionNo}
+		</if>
+	</sql>
+
+	<!-- 根据ID查询数据 -->
+	<select id="queryById" parameterType="java.lang.Long" resultMap="resultMap">
+		SELECT
+			<include refid="entityColumn"></include>
+		FROM biz_buy_address
+			WHERE id_ = #{id}
+	</select>
+
+	<!-- 实体参数Where -->
+	<sql id="entityWhere">
+		<where>
+			<include refid="entityIf"></include>
+		</where>
+		<if test="orderBy != null"> order by ${orderBy} </if>
+		<if test="sortAsc != null"> ${sortAsc} </if>
+	</sql>
+	<!-- 集合查询 -->
+	<select id="queryList" parameterType="BizBuyAddress" resultMap="resultMap">
+		SELECT
+			<include refid="entityColumn"></include>
+		FROM biz_buy_address
+			<include refid="entityWhere"></include>
+	</select>
+
+	<!-- 扩展参数Where -->
+	<sql id="mapWhere">
+		<where>
+			<include refid="entityIf"></include>
+			<if test="consigneeNameLike != null and consigneeNameLike != ''">
+				AND consignee_name LIKE CONCAT('%', #{consigneeNameLike}, '%')
+			</if>
+		</where>
+		<if test="orderBy != null"> order by ${orderBy} </if>
+		<if test="sortAsc != null"> ${sortAsc} </if>
+	</sql>
+	<!-- 查询ID集合 -->
+	<select id="selectCount" resultType="java.lang.Long">
+		SELECT id_  FROM biz_buy_address
+		<include refid="mapWhere"></include>
+	</select>
+	<!-- 分页查询 -->
+	<select id="queryPage" parameterType="java.util.Map" resultMap="resultMap">
+		SELECT
+			<include refid="entityColumn"></include>
+		FROM biz_buy_address
+			<include refid="mapWhere"></include>
+			<if test="limit != null"> LIMIT ${limit} </if>
+			<if test="offset != null"> OFFSET ${offset} </if>
+	</select>
+</mapper>
+```
+SelectMain.java：
+```Java
+package com.mutistic.mybatis.java.select;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import com.mutistic.mybatis.java.model.BizBuyAddress;
+import com.mutistic.mybatis.java.model.Pagination;
+import com.mutistic.mybatis.java.select.mapper.SelectMapper;
+import com.mutistic.mybatis.java.utils.SqlSeesionUtil;
+import com.mutistic.mybatis.utils.PrintUtil;
+// MyBatis查询数据
+public class SelectMain {
+	public static void main(String[] args) {
+		SelectMapper mapper = SqlSeesionUtil.getMapper(SelectMapper.class);
+		PrintUtil.one("1、MyBatis查询数据");
+		showByQueryById(mapper);
+		showByQueryList(mapper);
+		showByQueryPage(mapper);
+		SqlSeesionUtil.close();
+	}
+	private static void showByQueryById(SelectMapper mapper) {
+		PrintUtil.one("2、根据ID查询数据： ");
+		BizBuyAddress entity = mapper.queryById(1547713057l);
+		PrintUtil.two("2.1、查询结果：", "entity=" + entity);
+	}
+	private static void showByQueryList(SelectMapper mapper) {
+		PrintUtil.one("3、根据实体查询集合：");
+
+		BizBuyAddress params = new BizBuyAddress();
+		params.setId(1547713057l);
+		List<BizBuyAddress> entityList = mapper.queryList(params);
+		PrintUtil.two("3.1、查询结果：", "entityList=" + entityList);
+	}
+	private static void showByQueryPage(SelectMapper mapper) {
+		PrintUtil.one("4、根据Map分页：");
+
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("consigneeNameLike", "test");
+		List<Long> idList = mapper.selectCount(params);
+		PrintUtil.two("4.1、查询总条数（id集合）：", "idList=" + idList);
+		PrintUtil.println();
+
+		Map<String, Object> pageParam = new HashMap<String, Object>();
+		pageParam.put("offset", 0);
+		pageParam.put("limit", 10);
+		pageParam.put("ids", idList);
+		List<BizBuyAddress> resultList = mapper.queryPage(pageParam);
+		PrintUtil.two("4.2、分页查询结果（集合大小）：", "idList=" + resultList.size());
+		PrintUtil.println();
+
+		Integer offset = (Integer) pageParam.get("offset");
+		Integer limit = (Integer) pageParam.get("limit");
+		Pagination<BizBuyAddress> page = new Pagination<BizBuyAddress>();
+		page.setTotal(Long.valueOf(idList.size()));
+		page.setPages(offset);
+		page.setSize(resultList.size());
+		page.setRecords(resultList);
+		
+		int current = (int)(page.getTotal() / limit);
+		if(page.getTotal() % limit != 0) {
+			current++;
+		}
+		page.setCurrent(current);
+		PrintUtil.two("4.3、封装成分页对象：", "Pagination=" + page);
+	}
+}
+```
+
+---
+### <a id="a_notes">[Notes]()</a> <a href="#top">last</a> <a href="#a_catalogue">next</a>
+[Pit1：mybatis-config.xml问题集]()  
+[Pit2：mapper.xml问题集]()  
+
+---
+<a id="a_down"></a>  
+<a href="#a_top">Top</a> 
+<a href="#a_catalogue">Catalogue</a>

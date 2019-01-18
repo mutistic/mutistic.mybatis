@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!-- Mybatis 3 mapper DTD规范 -->
+<!DOCTYPE mapper 
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper
+	namespace="com.mutistic.mybatis.java.select.mapper.SelectMapper">
+
+	<!-- 映射结果集 -->
+	<resultMap id="resultMap" type="BizBuyAddress">
+		<id column="id_" property="id" />
+		<result column="user_id" property="userId" />
+		<result column="consignee_name" property="consigneeName" />
+		<result column="consignee_mobile" property="consigneeMobile" />
+		<result column="consignee_address" property="consigneeAddress" />
+		<result column="province_code" property="cityCode" />
+		<result column="city_code" property="cityCode" />
+		<result column="county_code" property="countyCode" />
+		<result column="is_default" property="isDefault" />
+		<result column="create_by" property="createBy" />
+		<result column="create_time" property="createTime" />
+		<result column="update_by" property="updateBy" />
+		<result column="update_time" property="updateTime" />
+		<result column="remark_" property="remark" />
+		<result column="enable_" property="enable" />
+		<result column="version_no" property="versionNo" />
+	</resultMap>
+
+	<!-- 定义可重用的 SQL 代码段，可以包含在其他语句中 -->
+	<sql id="entityColumn">
+		id_, user_id, consignee_name, consignee_mobile, consignee_address,
+		province_code, city_code, county_code, is_default,
+		create_by, create_time, update_by, update_time,
+		remark_, enable_, version_no
+	</sql>
+	<!-- 实体参数Where -->
+	<sql id="entityWhere">
+		<where>
+			<include refid="entityIf"></include>
+		</where>
+		<if test="orderBy != null"> order by ${orderBy} </if>
+		<if test="sortAsc != null"> ${sortAsc} </if>
+	</sql>
+	<!-- 扩展参数Where -->
+	<sql id="mapWhere">
+		<where>
+			<include refid="entityIf"></include>
+			<if test="consigneeNameLike != null and consigneeNameLike != ''">
+				AND consignee_name LIKE CONCAT('%', #{consigneeNameLike}, '%')
+			</if>
+		</where>
+		<if test="orderBy != null"> order by ${orderBy} </if>
+		<if test="sortAsc != null"> ${sortAsc} </if>
+	</sql>
+	<!-- 实体动态条件 -->
+	<sql id="entityIf">
+		<if test="id != null">
+			AND id_ = #{id}
+		</if>
+		<if test="ids != null and !ids.isEmpty()">
+			<!-- <if test="ids != null and ids.size() > 0"> -->
+			AND id_ IN
+			<foreach collection="ids" item="key" separator="," open="("
+				close=")">
+				${key}
+			</foreach>
+		</if>
+		<if test="userId != null">
+			AND user_id = #{userId}
+		</if>
+		<if test="consigneeName != null and consigneeName != ''">
+			AND consignee_name = #{consigneeName}
+		</if>
+		<if test="consigneeMobile != null and consigneeMobile != ''">
+			AND consignee_mobile = #{consigneeMobile}
+		</if>
+		<if test="consigneeAddress != null and consigneeAddress != ''">
+			AND consignee_address = #{consigneeAddress}
+		</if>
+		<if test="provinceCode != null and provinceCode != ''">
+			AND province_code = #{provinceCode}
+		</if>
+		<if test="cityCode != null and cityCode != ''">
+			AND city_code = #{cityCode}
+		</if>
+		<if test="countyCode != null and countyCode != ''">
+			AND county_code = #{countyCode}
+		</if>
+		<if test="isDefault != null"> AND is_default = #{isDefault}
+		</if>
+		<if test="createBy != null">
+			AND create_by = #{createBy}
+		</if>
+		<if test="createTime != null">
+			AND create_time = #{createTime}
+		</if>
+		<if test="updateBy != null">
+			AND update_by = #{updateBy}
+		</if>
+		<if test="updateTime != null">
+			AND update_time = #{updateTime}
+		</if>
+		<if test="remark != null and remark != ''">
+			AND remark_ = #{remark}
+		</if>
+		<if test="enable != null">
+			AND enable_ = #{enable}
+		</if>
+		<if test="versionNo != null">
+			AND version_no = #{versionNo}
+		</if>
+	</sql>
+
+	<!-- 根据ID查询数据 -->
+	<select id="queryById" parameterType="java.lang.Long" resultMap="resultMap">
+		SELECT
+			<include refid="entityColumn"></include>
+		FROM biz_buy_address
+			WHERE id_ = #{id}
+	</select>
+
+	<!-- 集合查询 -->
+	<select id="queryList" parameterType="BizBuyAddress" resultMap="resultMap">
+		SELECT
+			<include refid="entityColumn"></include>
+		FROM biz_buy_address
+			<include refid="entityWhere"></include>
+	</select>
+
+	<!-- 查询ID集合 -->
+	<select id="selectCount" resultType="java.lang.Long">
+		SELECT id_  FROM biz_buy_address
+		<include refid="mapWhere"></include>
+	</select>
+	<!-- 分页查询 -->
+	<select id="queryPage" parameterType="java.util.Map" resultMap="resultMap">
+		SELECT
+			<include refid="entityColumn"></include>
+		FROM biz_buy_address
+			<include refid="mapWhere"></include>
+			<if test="limit != null"> LIMIT ${limit} </if>
+			<if test="offset != null"> OFFSET ${offset} </if>
+	</select>
+
+</mapper>
+  

@@ -8,7 +8,7 @@ import com.mutistic.mybatis.java.utils.SqlSeesionUtil;
 import com.mutistic.mybatis.utils.PrintUtil;
 
 /**
- * @program MyBatis测试新增
+ * @program MyBatis新增数据
  * @description
  * @author mutisitic
  * @date 2019年1月17日
@@ -17,7 +17,7 @@ public class InsertMain {
 	public static void main(String[] args) {
 		InsertMapper mapper = SqlSeesionUtil.getMapper(InsertMapper.class);
 
-		PrintUtil.one("1、MyBatis测试新增");
+		PrintUtil.one("1、MyBatis新增数据");
 		showByStatic(mapper);
 		showByDynamic(mapper);
 

@@ -2,24 +2,26 @@
 
 <!-- Mybatis 3 configuration DTD规范 -->
 <!DOCTYPE configuration
-  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
-  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
 
+<!-- configuration：配置文件的根标签 -->
 <configuration>
 
-	<!-- XML 映射配置文件参考：http://www.mybatis.org/mybatis-3/zh/configuration.html -->
+	<!-- Mybatis配置文件参考：http://www.mybatis.org/mybatis-3/zh/configuration.html -->
 
+	<!-- properties：属性都是可外部配置且可动态替换的，既可以在典型的 Java 属性文件中配置，亦可通过 properties 元素的子元素来传递 -->
 	<properties
 		resource="com/mutistic/mybatis/java/resources/jdbc.properties">
 		<!-- <property name="username" value="dev_user" /> -->
 	</properties>
 
-
+	<!-- typeAliases：类型别名是为 Java 类型设置一个短的名字。它只和 XML 配置有关，存在的意义仅在于用来减少类完全限定名的冗余 -->
 	<typeAliases>
 		<typeAlias alias="BizBuyAddress"
 			type="com.mutistic.mybatis.java.model.BizBuyAddress" />
 	</typeAliases>
-	
+
+	<!-- environments：配置环境，MyBatis 可以配置成适应多种环境，这种机制有助于将 SQL 映射应用于多种数据库之中 -->
 	<environments default="development">
 		<environment id="development">
 			<transactionManager type="JDBC">
@@ -32,10 +34,10 @@
 			</dataSource>
 		</environment>
 	</environments>
-	
-	
+
+	<!-- mappers：映射器，定义 SQL 映射语句，使用相对于类路径的资源引用， 或完全限定资源定位符（包括 file:/// 的 URL），或类名和包名 -->
 	<mappers>
-		<mapper
-			class="com.mutistic.mybatis.java.insert.mapper.InsertMapper" />
+		<mapper resource="com/mutistic/mybatis/java/insert/mapper/InsertMapper.xml" />
+		<mapper class="com.mutistic.mybatis.java.select.mapper.SelectMapper" />
 	</mappers>
 </configuration>

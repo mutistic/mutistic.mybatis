@@ -5,6 +5,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
 import com.mutistic.mybatis.java.resources.ResourcesTest;
+import com.mutistic.mybatis.java.select.mapper.SelectMapper;
 import com.mutistic.mybatis.utils.PrintUtil;
 
 /**
@@ -119,5 +120,9 @@ public class SqlSeesionUtil {
 		} catch (Exception e) {
 			PrintUtil.err("0.6.e、关闭SqlSeession出现异常，打印堆栈信息：" + e.getMessage());
 		}
+	}
+	
+	public static void main(String[] args) {
+		getMapper(SelectMapper.class);
 	}
 }
