@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!-- Mybatis 3 mapper DTD规范 -->
+<!DOCTYPE mapper 
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper
+	namespace="com.mutistic.mybatis.java.update.mapper.UpdateMapper">
+
+	<!-- 直接修改数据 -->
+	<update id="updateEntity" parameterType="BizBuyAddress">
+		UPDATE biz_buy_address
+			SET user_id = #{userId},
+			consignee_name = #{consigneeName},
+			consignee_mobile = #{consigneeMobile},
+			consignee_address = #{consigneeAddress},
+			province_code = #{provinceCode},
+			city_code = #{cityCode},
+			county_code = #{countyCode},
+			 is_default = #{isDefault},
+			create_by = #{createBy},
+			create_time = #{createTime},
+			update_by = #{updateBy},
+			update_time = #{updateTime},
+			remark_ = #{remark},
+			enable_ = #{enable},
+			version_no = #{versionNo}
+		WHERE id_ = #{id}
+	</update>
+	
+	<!-- 当字段不为null时修改数据 -->
+	<update id="updateByNotNull" parameterType="BizBuyAddress">
+		UPDATE biz_buy_address
+		<!-- <trim prefix="SET" suffixOverrides=","></trim> -->
+		<set>
+			<if test="userId != null">
+				user_id = #{userId},
+			</if>
+			<if test="consigneeName != null">
+				consignee_name = #{consigneeName},
+			</if>
+			<if test="consigneeMobile != null">
+				consignee_mobile = #{consigneeMobile},
+			</if>
+			<if test="consigneeAddress != null">
+				consignee_address = #{consigneeAddress},
+			</if>
+			<if test="provinceCode != null">
+				province_code = #{provinceCode},
+			</if>
+			<if test="cityCode != null">
+				city_code = #{cityCode},
+			</if>
+			<if test="countyCode != null">
+				county_code = #{countyCode},
+			</if>
+			<if test="isDefault != null">
+				is_default = #{isDefault},
+			</if>
+			<if test="createBy != null">
+				create_by = #{createBy},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime},
+			</if>
+			<if test="updateBy != null">
+				update_by = #{updateBy},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime},
+			</if>
+			<if test="remark != null">
+				remark_ = #{remark},
+			</if>
+			<if test="enable != null">
+				enable_ = #{enable},
+			</if>
+			<if test="versionNo != null">
+				version_no = #{versionNo},
+			</if>
+		</set>
+		WHERE id_ = #{id}
+	</update>
+</mapper>
+  

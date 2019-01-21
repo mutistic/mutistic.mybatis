@@ -14,6 +14,7 @@
 2. <a href="#a_xml">MyBatis相关配置</a>
 3. <a href="#a_insert">MyBatis新增数据</a>
 4. <a href="#a_select">MyBatis查询数据</a>
+5. <a href="#a_update">MyBatis修改数据</a>
 98. <a href="#a_notes">Notes</a>
 99. <a href="#a_down">down</a>
 
@@ -452,7 +453,7 @@ public class InsertMain {
 ```
 
 ---
-### <a id="a_select">四、MyBatis查询数据：</a> <a href="#a_insert">last</a> <a href="#">next</a>
+### <a id="a_select">四、MyBatis查询数据：</a> <a href="#a_insert">last</a> <a href="#a_update">next</a>
 Pagination.java：
 ```Java
 package com.mutistic.mybatis.java.model;
@@ -703,6 +704,154 @@ public class SelectMain {
     page.setCurrent(current);
     PrintUtil.two("4.3、封装成分页对象：", "Pagination=" + page);
   }
+}
+```
+
+---
+### <a id="a_update">五、MyBatis修改数据：</a> <a href="#a_select">last</a> <a href="#">next</a>
+UpdateMapper.java：
+```Java
+package com.mutistic.mybatis.java.update.mapper;
+import com.mutistic.mybatis.java.model.BizBuyAddress;
+// pdateMapper 接口
+public interface UpdateMapper {
+	// 直接修改数据
+	Long updateEntity(BizBuyAddress entity);
+	// 当字段不为null时修改数据
+	Long updateByNotNull(BizBuyAddress entity);
+}
+```
+UpdateMapper.xml：
+```XML
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Mybatis 3 mapper DTD规范 -->
+<!DOCTYPE mapper 
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mutistic.mybatis.java.update.mapper.UpdateMapper">
+	<!-- 直接修改数据 -->
+	<update id="updateEntity" parameterType="BizBuyAddress">
+		UPDATE biz_buy_address
+			SET user_id = #{userId},
+			consignee_name = #{consigneeName},
+			consignee_mobile = #{consigneeMobile},
+			consignee_address = #{consigneeAddress},
+			province_code = #{provinceCode},
+			city_code = #{cityCode},
+			county_code = #{countyCode},
+			 is_default = #{isDefault},
+			create_by = #{createBy},
+			create_time = #{createTime},
+			update_by = #{updateBy},
+			update_time = #{updateTime},
+			remark_ = #{remark},
+			enable_ = #{enable},
+			version_no = #{versionNo}
+		WHERE id_ = #{id}
+	</update>
+	
+	<!-- 当字段不为null时修改数据 -->
+	<update id="updateByNotNull" parameterType="BizBuyAddress">
+		UPDATE biz_buy_address
+		<!-- <trim prefix="SET" suffixOverrides=","></trim> -->
+		<set>
+			<if test="userId != null">
+				user_id = #{userId},
+			</if>
+			<if test="consigneeName != null">
+				consignee_name = #{consigneeName},
+			</if>
+			<if test="consigneeMobile != null">
+				consignee_mobile = #{consigneeMobile},
+			</if>
+			<if test="consigneeAddress != null">
+				consignee_address = #{consigneeAddress},
+			</if>
+			<if test="provinceCode != null">
+				province_code = #{provinceCode},
+			</if>
+			<if test="cityCode != null">
+				city_code = #{cityCode},
+			</if>
+			<if test="countyCode != null">
+				county_code = #{countyCode},
+			</if>
+			<if test="isDefault != null">
+				is_default = #{isDefault},
+			</if>
+			<if test="createBy != null">
+				create_by = #{createBy},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime},
+			</if>
+			<if test="updateBy != null">
+				update_by = #{updateBy},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime},
+			</if>
+			<if test="remark != null">
+				remark_ = #{remark},
+			</if>
+			<if test="enable != null">
+				enable_ = #{enable},
+			</if>
+			<if test="versionNo != null">
+				version_no = #{versionNo},
+			</if>
+		</set>
+		WHERE id_ = #{id}
+	</update>
+</mapper>
+```
+UpdateMain.java：
+```Java
+package com.mutistic.mybatis.java.update;
+import java.util.Date;
+import com.mutistic.mybatis.java.model.BizBuyAddress;
+import com.mutistic.mybatis.java.update.mapper.UpdateMapper;
+import com.mutistic.mybatis.java.utils.SqlSeesionUtil;
+import com.mutistic.mybatis.utils.PrintUtil;
+//  MyBatis修改数据
+public class UpdateMain {
+	public static void main(String[] args) {
+		UpdateMapper mapper = SqlSeesionUtil.getMapper(UpdateMapper.class);
+		PrintUtil.one("1、 MyBatis修改数据");
+		
+		BizBuyAddress entity = new BizBuyAddress();
+		entity.setId(1029214969835257858l);
+		entity.setCityCode("210700");
+		entity.setConsigneeAddress("testAddress");
+		entity.setConsigneeMobile("13600000000");
+		entity.setConsigneeName("test");
+		entity.setCountyCode("210781");
+		entity.setCreateBy(99999l);
+		entity.setCreateTime(new Date());
+		entity.setEnable(0);
+		entity.setIsDefault(1);
+		entity.setProvinceCode("210000");
+		entity.setRemark("testRemark");
+		entity.setUpdateBy(entity.getCreateBy());
+		entity.setUpdateTime(entity.getCreateTime());
+		entity.setUserId(111111l);
+		entity.setVersionNo(1);
+		
+		showByUpdateEntity(mapper, entity);
+		showByUpdateByNotNull(mapper, entity);
+		SqlSeesionUtil.close();
+	}
+	private static void showByUpdateEntity(UpdateMapper mapper, BizBuyAddress entity) {
+		PrintUtil.one("2、直接修改数据： ");
+		mapper.updateEntity(entity);
+		SqlSeesionUtil.commit();
+	}
+	private static void showByUpdateByNotNull(UpdateMapper mapper, BizBuyAddress entity) {
+		PrintUtil.one("3、当字段不为null时修改数据： ");
+		entity.setRemark("");
+		entity.setVersionNo(2);
+		mapper.updateByNotNull(entity);
+		SqlSeesionUtil.commit();
+	}
 }
 ```
 

@@ -87,7 +87,8 @@
 		<if test="countyCode != null and countyCode != ''">
 			AND county_code = #{countyCode}
 		</if>
-		<if test="isDefault != null"> AND is_default = #{isDefault}
+		<if test="isDefault != null">
+			AND is_default = #{isDefault}
 		</if>
 		<if test="createBy != null">
 			AND create_by = #{createBy}
