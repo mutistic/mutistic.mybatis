@@ -20,8 +20,8 @@
 	</sql>
 
 	<!-- 插入静态数据 -->
-	<insert id="insertByStatic" parameterType="com.mutistic.mybatis.java.model.BizBuyAddress">
-		INSERT INTO biz_buy_address (
+	<insert id="insertByStatic" parameterType="com.mutistic.mybatis.java.model.BizAddress">
+		INSERT INTO biz_address (
 			<include refid="column"></include>
 		) VALUES (
 			UNIX_TIMESTAMP(NOW()), '1029209400357347330', '张三',
@@ -33,8 +33,8 @@
 	</insert>
 
 	<!-- 插入动态数据 -->
-	<insert id="insertByDynamic" parameterType="BizBuyAddress">
-		INSERT INTO biz_buy_address (
+	<insert id="insertByDynamic" parameterType="BizAddress">
+		INSERT INTO biz_address (
 			<include refid="column"></include>
 		) VALUES (
 			#{id},#{userId}, #{consigneeName}, #{consigneeMobile}, #{consigneeAddress},

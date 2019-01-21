@@ -17,12 +17,15 @@
 
 	<!-- typeAliases：类型别名是为 Java 类型设置一个短的名字。它只和 XML 配置有关，存在的意义仅在于用来减少类完全限定名的冗余 -->
 	<typeAliases>
-		<typeAlias alias="BizBuyAddress"
-			type="com.mutistic.mybatis.java.model.BizBuyAddress" />
+		<typeAlias alias="BizAddress" type="com.mutistic.mybatis.java.model.BizAddress" />
+		<typeAlias alias="BizUser" type="com.mutistic.mybatis.java.model.BizUser" />
+		<!-- <package name="com.mutistic.mybatis"/> -->
 	</typeAliases>
 
-	<!-- environments：配置环境，MyBatis 可以配置成适应多种环境，这种机制有助于将 SQL 映射应用于多种数据库之中 -->
+	<!-- environments：配置环境，MyBatis 可以配置成适应多种环境，这种机制有助于将 SQL 映射应用于多种数据库之中
+		default：标识使用的环境配置 -->
 	<environments default="development">
+		<!-- 开发环境 -->
 		<environment id="development">
 			<transactionManager type="JDBC">
 			</transactionManager>
@@ -41,5 +44,7 @@
 		<mapper class="com.mutistic.mybatis.java.select.mapper.SelectMapper" />
 		<mapper resource="com/mutistic/mybatis/java/update/mapper/UpdateMapper.xml" />
 		<mapper resource="com/mutistic/mybatis/java/delete/mapper/DeleteMapper.xml" />
+		<mapper resource="com/mutistic/mybatis/java/bizuser/mapper/BizuserMapper.xml" />
+		<mapper resource="com/mutistic/mybatis/java/one/mapper/OneToOneMapper.xml" />
 	</mappers>
 </configuration>

@@ -1,6 +1,6 @@
 package com.mutistic.mybatis.java.insert.mapper;
 
-import com.mutistic.mybatis.java.model.BizBuyAddress;
+import com.mutistic.mybatis.java.model.BizAddress;
 
 /**
  * @program InsertMapper 接口
@@ -25,5 +25,5 @@ public interface InsertMapper {
 	 * @param entity
 	 * @return
 	 */
-	Long insertByDynamic(BizBuyAddress entity);
+	Long insertByDynamic(BizAddress entity);
 }

@@ -8,7 +8,7 @@
 	namespace="com.mutistic.mybatis.java.select.mapper.SelectMapper">
 
 	<!-- 映射结果集 -->
-	<resultMap id="resultMap" type="BizBuyAddress">
+	<resultMap id="resultMap" type="BizAddress">
 		<id column="id_" property="id" />
 		<result column="user_id" property="userId" />
 		<result column="consignee_name" property="consigneeName" />
@@ -117,31 +117,37 @@
 	<select id="queryById" parameterType="java.lang.Long" resultMap="resultMap">
 		SELECT
 			<include refid="entityColumn"></include>
-		FROM biz_buy_address
+		FROM biz_address
 			WHERE id_ = #{id}
 	</select>
 
 	<!-- 集合查询 -->
-	<select id="queryList" parameterType="BizBuyAddress" resultMap="resultMap">
+	<select id="queryList" parameterType="BizAddress" resultMap="resultMap">
 		SELECT
 			<include refid="entityColumn"></include>
-		FROM biz_buy_address
+		FROM biz_address
 			<include refid="entityWhere"></include>
 	</select>
 
 	<!-- 查询ID集合 -->
 	<select id="selectCount" resultType="java.lang.Long">
-		SELECT id_  FROM biz_buy_address
+		SELECT id_  FROM biz_address
 		<include refid="mapWhere"></include>
 	</select>
 	<!-- 分页查询 -->
 	<select id="queryPage" parameterType="java.util.Map" resultMap="resultMap">
 		SELECT
 			<include refid="entityColumn"></include>
-		FROM biz_buy_address
+		FROM biz_address
 			<include refid="mapWhere"></include>
 			<if test="limit != null"> LIMIT ${limit} </if>
 			<if test="offset != null"> OFFSET ${offset} </if>
+	</select>
+	<select id="queryByUserId" parameterType="java.lang.Long" resultMap="resultMap">
+		SELECT
+			<include refid="entityColumn"></include>
+		FROM biz_address
+			WHERE user_id = #{userId}
 	</select>
 
 </mapper>

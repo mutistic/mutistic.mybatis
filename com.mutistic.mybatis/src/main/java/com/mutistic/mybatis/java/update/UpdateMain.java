@@ -2,7 +2,7 @@ package com.mutistic.mybatis.java.update;
 
 import java.util.Date;
 
-import com.mutistic.mybatis.java.model.BizBuyAddress;
+import com.mutistic.mybatis.java.model.BizAddress;
 import com.mutistic.mybatis.java.update.mapper.UpdateMapper;
 import com.mutistic.mybatis.java.utils.SqlSeesionUtil;
 import com.mutistic.mybatis.utils.PrintUtil;
@@ -18,7 +18,7 @@ public class UpdateMain {
 		UpdateMapper mapper = SqlSeesionUtil.getMapper(UpdateMapper.class);
 		PrintUtil.one("1、 MyBatis修改数据");
 		
-		BizBuyAddress entity = new BizBuyAddress();
+		BizAddress entity = new BizAddress();
 		entity.setId(1029214969835257858l);
 		entity.setCityCode("210700");
 		entity.setConsigneeAddress("testAddress");
@@ -41,14 +41,14 @@ public class UpdateMain {
 		SqlSeesionUtil.close();
 	}
 
-	private static void showByUpdateEntity(UpdateMapper mapper, BizBuyAddress entity) {
+	private static void showByUpdateEntity(UpdateMapper mapper, BizAddress entity) {
 		PrintUtil.one("2、直接修改数据： ");
 		Long result = mapper.updateEntity(entity);
 		PrintUtil.two("2.1、修改结果", "result="+result);
 		SqlSeesionUtil.commit();
 	}
 
-	private static void showByUpdateByNotNull(UpdateMapper mapper, BizBuyAddress entity) {
+	private static void showByUpdateByNotNull(UpdateMapper mapper, BizAddress entity) {
 		PrintUtil.one("3、当字段不为null时修改数据： ");
 		entity.setRemark("");
 		entity.setVersionNo(2);

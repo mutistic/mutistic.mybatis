@@ -7,7 +7,7 @@ package com.mutistic.mybatis.java.model;
  * @date 2019年1月18日
  */
 @SuppressWarnings("serial")
-public class BizBuyAddress extends BaseModel {
+public class BizAddress extends BaseModel {
 	/** 用户ID */
 	private Long userId;
 	/** 收货人 */

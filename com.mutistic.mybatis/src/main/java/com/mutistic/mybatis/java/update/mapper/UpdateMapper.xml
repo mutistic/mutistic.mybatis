@@ -8,8 +8,8 @@
 	namespace="com.mutistic.mybatis.java.update.mapper.UpdateMapper">
 
 	<!-- 直接修改数据 -->
-	<update id="updateEntity" parameterType="BizBuyAddress">
-		UPDATE biz_buy_address
+	<update id="updateEntity" parameterType="BizAddress">
+		UPDATE biz_address
 			SET user_id = #{userId},
 			consignee_name = #{consigneeName},
 			consignee_mobile = #{consigneeMobile},
@@ -29,8 +29,8 @@
 	</update>
 	
 	<!-- 当字段不为null时修改数据 -->
-	<update id="updateByNotNull" parameterType="BizBuyAddress">
-		UPDATE biz_buy_address
+	<update id="updateByNotNull" parameterType="BizAddress">
+		UPDATE biz_address
 		<!-- <trim prefix="SET" suffixOverrides=","></trim> -->
 		<set>
 			<if test="userId != null">

@@ -1,6 +1,6 @@
 package com.mutistic.mybatis.java.delete.mapper;
 
-import com.mutistic.mybatis.java.model.BizBuyAddress;
+import com.mutistic.mybatis.java.model.BizAddress;
 
 /**
  * @program DeleteMapper 接口
@@ -17,7 +17,7 @@ public interface DeleteMapper {
 	 * @param entity
 	 * @return
 	 */
-	Long deleteEntity(BizBuyAddress entity);
+	Long deleteEntity(BizAddress entity);
 
 	/**
 	 * @description 根据ID删除数据 

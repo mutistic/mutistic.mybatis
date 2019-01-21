@@ -7,13 +7,13 @@
 <mapper
 	namespace="com.mutistic.mybatis.java.delete.mapper.DeleteMapper">
 	<!-- 根据实体删除数据 -->
-	<delete id="deleteEntity" parameterType="BizBuyAddress">
-		DELETE FROM biz_buy_address WHERE id_ = #{id}
+	<delete id="deleteEntity" parameterType="BizAddress">
+		DELETE FROM biz_address WHERE id_ = #{id}
 	</delete>
 	
 	<!-- 根据ID删除数据  -->
 	<delete id="deleteById" parameterType="java.lang.Long">
-		DELETE FROM biz_buy_address WHERE id_ = #{id}
+		DELETE FROM biz_address WHERE id_ = #{id}
 	</delete>
 </mapper>
   

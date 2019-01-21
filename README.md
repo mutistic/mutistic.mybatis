@@ -16,6 +16,7 @@
 4. <a href="#a_select">MyBatis查询数据</a>
 5. <a href="#a_update">MyBatis修改数据</a>
 6. <a href="#a_delete">MyBatis删除数据</a>
+7. <a href="#a_one">MyBatis映射关系：一对一</a>
 98. <a href="#a_notes">Notes</a>
 99. <a href="#a_down">down</a>
 
@@ -859,7 +860,7 @@ public class UpdateMain {
 ```
 
 ---
-### <a id="a_delete">六、MyBatis删除数据</a> <a href="#a_update">last</a> <a href="#a_delete">next</a>
+### <a id="a_delete">六、MyBatis删除数据</a> <a href="#a_update">last</a> <a href="#a_one">next</a>
 DeleteMapper.java：
 ```Java
 package com.mutistic.mybatis.java.delete.mapper;
@@ -917,6 +918,195 @@ public class DeleteMain {
 		PrintUtil.one("3、根据ID删除数据");
 		Long result = mapper.deleteById(1547720793414l);
 		PrintUtil.two("3.1、删除结果", "result="+ result);
+	}
+}
+```
+
+---
+### <a id="a_one">七、MyBatis映射关系：一对一</a> <a href="#a_delete">last</a> <a href="#">next</a>
+OneToOneDto.java：
+```Java
+package com.mutistic.mybatis.java.one.dto;
+import java.io.Serializable;
+import com.mutistic.mybatis.java.model.BizAddress;
+import com.mutistic.mybatis.java.model.BizUser;
+// 一对一关系映射DTO对象
+@SuppressWarnings("serial")
+public class OneToOneDto implements Serializable {
+	/** BizUser对象 */
+	private BizUser bizUser;
+	/** BizAddress对象 */
+	private BizAddress bizAddress;
+	// ... 
+}
+```
+OneToOneMapper.java：
+```Java
+package com.mutistic.mybatis.java.one.mapper;
+import com.mutistic.mybatis.java.one.dto.OneToOneDto;
+// OneToOneMapper 接口
+public interface OneToOneMapper {
+	// 通过ResultMap映射查询结果集
+	OneToOneDto queryByResultMap(Long id);
+	// 通过association的ResultMap属性映射查询结果集 
+	OneToOneDto queryByAssociationResultMap(Long id);
+	// 通过association的Select根据外键查询结果集 
+	OneToOneDto queryByAssociationSelect(Long id);
+}
+```
+OneToOneMapper.xml：
+```XML
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Mybatis 3 mapper DTD规范 -->
+<!DOCTYPE mapper 
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mutistic.mybatis.java.one.mapper.OneToOneMapper">
+	<!-- 通过ResultMap映射查询结果集 -->
+	<resultMap id="ResultMap" type="com.mutistic.mybatis.java.one.dto.OneToOneDto">
+		<result column="id_" property="bizUser.id"/>
+		<result column="name_" property="bizUser.name" />
+		<result column="account_" property="bizUser.account" />
+		<result column="password_" property="bizUser.password" />
+		<result column="mobile_" property="bizUser.mobile" />
+		<result column="create_by" property="bizUser.createBy" />
+		<result column="create_time" property="bizUser.createTime" />
+		<result column="update_by" property="bizUser.updateBy" />
+		<result column="update_time" property="bizUser.updateTime" />
+		<result column="remark_" property="bizUser.remark" />
+		<result column="enable_" property="bizUser.enable" />
+		<result column="version_no" property="bizUser.versionNo" />
+		
+		<result column="id_1" property="bizAddress.id" />
+		<result column="user_id" property="bizAddress.userId" />
+		<result column="consignee_name" property="bizAddress.consigneeName" />
+		<result column="consignee_mobile" property="bizAddress.consigneeMobile" />
+		<result column="consignee_address" property="bizAddress.consigneeAddress" />
+		<result column="province_code" property="bizAddress.cityCode" />
+		<result column="city_code" property="bizAddress.cityCode" />
+		<result column="county_code" property="bizAddress.countyCode" />
+		<result column="is_default" property="bizAddress.isDefault" />
+		<result column="create_by1" property="bizAddress.createBy" />
+		<result column="create_time1" property="bizAddress.createTime" />
+		<result column="update_by1" property="bizAddress.updateBy" />
+		<result column="update_time1" property="bizAddress.updateTime" />
+		<result column="remark_1" property="bizAddress.remark" />
+		<result column="enable_1" property="bizAddress.enable" />
+		<result column="version_no1" property="bizAddress.versionNo" />
+	</resultMap>
+	<select id="queryByResultMap" parameterType="java.lang.Long" resultMap="ResultMap">
+		SELECT 
+		    bizUser.id_, bizUser.name_, bizUser.account_, bizUser.password_, bizUser.mobile_,
+			bizUser.create_by, bizUser.create_time, bizUser.update_by, bizUser.update_time,
+			bizUser.remark_, bizUser.enable_, bizUser.version_no,
+			bizAddress.id_, bizAddress.user_id, bizAddress.consignee_name, bizAddress.consignee_mobile, bizAddress.consignee_address,
+			bizAddress.province_code, bizAddress.city_code, bizAddress.county_code, bizAddress.is_default,
+			bizAddress.create_by, bizAddress.create_time, bizAddress.update_by, bizAddress.update_time,
+			bizAddress.remark_, bizAddress.enable_, bizAddress.version_no
+		FROM biz_address bizAddress
+		LEFT JOIN biz_user bizUser on bizUser.id_ = bizAddress.user_id
+		WHERE bizAddress.id_ = #{id}
+	</select>
+	
+	<!-- 通过association的ResultMap属性映射查询结果集 -->
+	<resultMap id="AssociationResultMap" type="com.mutistic.mybatis.java.one.dto.OneToOneDto">
+		<association property="bizUser" resultMap="BizUserResult"></association>
+		<association property="bizAddress" resultMap="BizAddressResult"></association>
+	</resultMap>
+	<resultMap id="BizUserResult"  type="BizUser">
+		<result column="id_" property="id"/>
+		<result column="name_" property="name" />
+		<result column="account_" property="account" />
+		<result column="password_" property="password" />
+		<result column="mobile_" property="mobile" />
+		<result column="create_by" property="createBy" />
+		<result column="create_time" property="createTime" />
+		<result column="update_by" property="updateBy" />
+		<result column="update_time" property="updateTime" />
+		<result column="remark_" property="remark" />
+		<result column="enable_" property="enable" />
+		<result column="version_no" property="versionNo" />
+	</resultMap>
+	<resultMap id="BizAddressResult"  type="BizAddress">
+		<result column="id_1" property="id" />
+		<result column="user_id" property="userId" />
+		<result column="consignee_name" property="consigneeName" />
+		<result column="consignee_mobile" property="consigneeMobile" />
+		<result column="consignee_address" property="consigneeAddress" />
+		<result column="province_code" property="cityCode" />
+		<result column="city_code" property="cityCode" />
+		<result column="county_code" property="countyCode" />
+		<result column="is_default" property="isDefault" />
+		<result column="create_by1" property="createBy" />
+		<result column="create_time1" property="createTime" />
+		<result column="update_by1" property="updateBy" />
+		<result column="update_time1" property="updateTime" />
+		<result column="remark_1" property="remark" />
+		<result column="enable_1" property="enable" />
+		<result column="version_no1" property="versionNo" />
+	</resultMap>
+	<select id="queryByAssociationResultMap" parameterType="java.lang.Long" resultMap="AssociationResultMap">
+		SELECT 
+		    bizUser.id_, bizUser.name_, bizUser.account_, bizUser.password_, bizUser.mobile_,
+			bizUser.create_by, bizUser.create_time, bizUser.update_by, bizUser.update_time,
+			bizUser.remark_, bizUser.enable_, bizUser.version_no,
+			bizAddress.id_, bizAddress.user_id, bizAddress.consignee_name, bizAddress.consignee_mobile, bizAddress.consignee_address,
+			bizAddress.province_code, bizAddress.city_code, bizAddress.county_code, bizAddress.is_default,
+			bizAddress.create_by, bizAddress.create_time, bizAddress.update_by, bizAddress.update_time,
+			bizAddress.remark_, bizAddress.enable_, bizAddress.version_no
+		FROM biz_address bizAddress
+		LEFT JOIN biz_user bizUser on bizUser.id_ = bizAddress.user_id
+		WHERE bizAddress.id_ = #{id}
+	</select>
+	
+	<!-- 通过association的Select根据外键查询结果集 -->
+	<resultMap id="AssociationSelect" type="com.mutistic.mybatis.java.one.dto.OneToOneDto">
+		<association property="bizAddress" resultMap="com.mutistic.mybatis.java.select.mapper.SelectMapper.resultMap"/>
+		<association property="bizUser" column="user_id" 
+			select="com.mutistic.mybatis.java.bizuser.mapper.BizUserMapper.queryById"/>
+	</resultMap>
+	<select id="queryByAssociationSelect" parameterType="java.lang.Long" resultMap="AssociationSelect">
+		SELECT 
+		   id_, user_id, consignee_name, consignee_mobile, consignee_address,
+			province_code, city_code, county_code, is_default,
+			create_by, create_time, update_by, update_time,
+			remark_, enable_, version_no
+		FROM biz_address
+		WHERE id_ = #{id}
+	</select>
+</mapper>
+```
+OneToOneMain.java：
+```Java
+package com.mutistic.mybatis.java.one;
+import com.mutistic.mybatis.java.one.dto.OneToOneDto;
+import com.mutistic.mybatis.java.one.mapper.OneToOneMapper;
+import com.mutistic.mybatis.java.utils.SqlSeesionUtil;
+import com.mutistic.mybatis.utils.PrintUtil;
+// MyBatis映射关系：一对一
+public class OneToOneMain {
+	public static void main(String[] args) {
+		OneToOneMapper mapper = SqlSeesionUtil.getMapper(OneToOneMapper.class);
+		PrintUtil.one("1、MyBatis映射关系：一对一");
+		
+		showByQueryByResultMap(mapper);
+		showByQueryByAssociationResultMap(mapper);
+		showByQueryByAssociationSelect(mapper);
+		SqlSeesionUtil.close();
+	}
+	private static void showByQueryByResultMap(OneToOneMapper mapper) {
+		PrintUtil.one("2、 通过ResultMap映射查询结果集：");
+		OneToOneDto dto = mapper.queryByResultMap(1547720793414l);
+		PrintUtil.two("2.1、查询结果：", "dto=" + dto);
+	}
+	private static void showByQueryByAssociationResultMap(OneToOneMapper mapper) {
+		PrintUtil.one("3、 通过association的ResultMap属性映射查询结果集：");
+		OneToOneDto dto = mapper.queryByAssociationResultMap(1547720793414l);
+		PrintUtil.two("3.1、查询结果：", "dto=" + dto);
+	}
+	private static void showByQueryByAssociationSelect(OneToOneMapper mapper) {
+		PrintUtil.one("4、通过association的Select根据外键查询结果集：");
+		OneToOneDto dto = mapper.queryByAssociationSelect(1547720793414l);
+		PrintUtil.two("4.1、查询结果：", "dto=" + dto);
 	}
 }
 ```

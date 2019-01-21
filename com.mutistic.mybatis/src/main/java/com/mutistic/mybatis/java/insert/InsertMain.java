@@ -3,7 +3,7 @@ package com.mutistic.mybatis.java.insert;
 import java.util.Date;
 
 import com.mutistic.mybatis.java.insert.mapper.InsertMapper;
-import com.mutistic.mybatis.java.model.BizBuyAddress;
+import com.mutistic.mybatis.java.model.BizAddress;
 import com.mutistic.mybatis.java.utils.SqlSeesionUtil;
 import com.mutistic.mybatis.utils.PrintUtil;
 
@@ -47,7 +47,7 @@ public class InsertMain {
 	private static void showByDynamic(InsertMapper mapper) {
 		PrintUtil.one("3、新增动态数据：");
 
-		BizBuyAddress entity = new BizBuyAddress();
+		BizAddress entity = new BizAddress();
 		entity.setId(System.currentTimeMillis());
 		entity.setCityCode("210700");
 		entity.setConsigneeAddress("testAddress");

@@ -1,6 +1,6 @@
 package com.mutistic.mybatis.java.update.mapper;
 
-import com.mutistic.mybatis.java.model.BizBuyAddress;
+import com.mutistic.mybatis.java.model.BizAddress;
 
 /**
  * @program UpdateMapper 接口
@@ -17,7 +17,7 @@ public interface UpdateMapper {
 	 * @param entity
 	 * @return
 	 */
-	Long updateEntity(BizBuyAddress entity);
+	Long updateEntity(BizAddress entity);
 	
 	/**
 	 * @description 当字段不为null时修改数据
@@ -26,5 +26,5 @@ public interface UpdateMapper {
 	 * @param entity
 	 * @return
 	 */
-	Long updateByNotNull(BizBuyAddress entity);
+	Long updateByNotNull(BizAddress entity);
 }

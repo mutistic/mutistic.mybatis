@@ -3,7 +3,7 @@ package com.mutistic.mybatis.java.select.mapper;
 import java.util.List;
 import java.util.Map;
 
-import com.mutistic.mybatis.java.model.BizBuyAddress;
+import com.mutistic.mybatis.java.model.BizAddress;
 
 /**
  * @program SelectMapper 接口
@@ -20,7 +20,7 @@ public interface SelectMapper {
 	 * @param id
 	 * @return
 	 */
-	BizBuyAddress queryById(Long id);
+	BizAddress queryById(Long id);
 
 	/**
 	 * @description 根据实体查询集合
@@ -29,7 +29,7 @@ public interface SelectMapper {
 	 * @param param
 	 * @return
 	 */
-	List<BizBuyAddress> queryList(BizBuyAddress param);
+	List<BizAddress> queryList(BizAddress param);
 
 	/**
 	 * @description 分页查询-查询总条数
@@ -47,7 +47,15 @@ public interface SelectMapper {
 	 * @param params
 	 * @return
 	 */
-	List<BizBuyAddress> queryPage(Map<String, Object> params);
+	List<BizAddress> queryPage(Map<String, Object> params);
 
+	/**
+	 * @description 根据UserId查询数据 
+	 * @author mutisitic
+	 * @date 2019年1月21日
+	 * @param userId
+	 * @return
+	 */
+	BizAddress queryByUserId(Long userId);
 	
 }

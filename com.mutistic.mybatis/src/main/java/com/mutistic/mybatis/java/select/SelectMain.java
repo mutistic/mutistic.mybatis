@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.mutistic.mybatis.java.model.BizBuyAddress;
+import com.mutistic.mybatis.java.model.BizAddress;
 import com.mutistic.mybatis.java.model.Pagination;
 import com.mutistic.mybatis.java.select.mapper.SelectMapper;
 import com.mutistic.mybatis.java.utils.SqlSeesionUtil;
@@ -28,16 +28,16 @@ public class SelectMain {
 
 	private static void showByQueryById(SelectMapper mapper) {
 		PrintUtil.one("2、根据ID查询数据： ");
-		BizBuyAddress entity = mapper.queryById(1547713057l);
+		BizAddress entity = mapper.queryById(1547713057l);
 		PrintUtil.two("2.1、查询结果：", "entity=" + entity);
 	}
 
 	private static void showByQueryList(SelectMapper mapper) {
 		PrintUtil.one("3、根据实体查询集合：");
 
-		BizBuyAddress params = new BizBuyAddress();
+		BizAddress params = new BizAddress();
 		params.setId(1547713057l);
-		List<BizBuyAddress> entityList = mapper.queryList(params);
+		List<BizAddress> entityList = mapper.queryList(params);
 		PrintUtil.two("3.1、查询结果：", "entityList=" + entityList);
 	}
 
@@ -54,13 +54,13 @@ public class SelectMain {
 		pageParam.put("offset", 0);
 		pageParam.put("limit", 10);
 		pageParam.put("ids", idList);
-		List<BizBuyAddress> resultList = mapper.queryPage(pageParam);
+		List<BizAddress> resultList = mapper.queryPage(pageParam);
 		PrintUtil.two("4.2、分页查询结果（集合大小）：", "idList=" + resultList.size());
 		PrintUtil.println();
 
 		Integer offset = (Integer) pageParam.get("offset");
 		Integer limit = (Integer) pageParam.get("limit");
-		Pagination<BizBuyAddress> page = new Pagination<BizBuyAddress>();
+		Pagination<BizAddress> page = new Pagination<BizAddress>();
 		page.setTotal(Long.valueOf(idList.size()));
 		page.setPages(offset);
 		page.setSize(resultList.size());

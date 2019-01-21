@@ -1,7 +1,7 @@
 package com.mutistic.mybatis.java.delete;
 
 import com.mutistic.mybatis.java.delete.mapper.DeleteMapper;
-import com.mutistic.mybatis.java.model.BizBuyAddress;
+import com.mutistic.mybatis.java.model.BizAddress;
 import com.mutistic.mybatis.java.utils.SqlSeesionUtil;
 import com.mutistic.mybatis.utils.PrintUtil;
 
@@ -22,7 +22,7 @@ public class DeleteMain {
 
 	private static void showByDeleteEntity(DeleteMapper mapper) {
 		PrintUtil.one("2、根据实体删除数据：");
-		BizBuyAddress entity = new BizBuyAddress();
+		BizAddress entity = new BizAddress();
 		entity.setId(1029214969835257858l);
 		Long result = mapper.deleteEntity(entity);
 		PrintUtil.two("2.1、删除结果", "result="+ result);
