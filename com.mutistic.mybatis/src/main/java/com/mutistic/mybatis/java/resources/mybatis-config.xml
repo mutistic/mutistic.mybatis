@@ -40,5 +40,6 @@
 		<mapper resource="com/mutistic/mybatis/java/insert/mapper/InsertMapper.xml" />
 		<mapper class="com.mutistic.mybatis.java.select.mapper.SelectMapper" />
 		<mapper resource="com/mutistic/mybatis/java/update/mapper/UpdateMapper.xml" />
+		<mapper resource="com/mutistic/mybatis/java/delete/mapper/DeleteMapper.xml" />
 	</mappers>
 </configuration>

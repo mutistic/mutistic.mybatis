@@ -43,7 +43,8 @@ public class UpdateMain {
 
 	private static void showByUpdateEntity(UpdateMapper mapper, BizBuyAddress entity) {
 		PrintUtil.one("2、直接修改数据： ");
-		mapper.updateEntity(entity);
+		Long result = mapper.updateEntity(entity);
+		PrintUtil.two("2.1、修改结果", "result="+result);
 		SqlSeesionUtil.commit();
 	}
 
@@ -51,7 +52,8 @@ public class UpdateMain {
 		PrintUtil.one("3、当字段不为null时修改数据： ");
 		entity.setRemark("");
 		entity.setVersionNo(2);
-		mapper.updateByNotNull(entity);
+		Long result = mapper.updateByNotNull(entity);
+		PrintUtil.two("3.1、修改结果", "result="+result);
 		SqlSeesionUtil.commit();
 	}
 }

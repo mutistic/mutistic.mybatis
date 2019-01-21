@@ -15,6 +15,7 @@
 3. <a href="#a_insert">MyBatis新增数据</a>
 4. <a href="#a_select">MyBatis查询数据</a>
 5. <a href="#a_update">MyBatis修改数据</a>
+6. <a href="#a_delete">MyBatis删除数据</a>
 98. <a href="#a_notes">Notes</a>
 99. <a href="#a_down">down</a>
 
@@ -708,7 +709,7 @@ public class SelectMain {
 ```
 
 ---
-### <a id="a_update">五、MyBatis修改数据：</a> <a href="#a_select">last</a> <a href="#">next</a>
+### <a id="a_update">五、MyBatis修改数据：</a> <a href="#a_select">last</a> <a href="#a_delete">next</a>
 UpdateMapper.java：
 ```Java
 package com.mutistic.mybatis.java.update.mapper;
@@ -842,15 +843,80 @@ public class UpdateMain {
 	}
 	private static void showByUpdateEntity(UpdateMapper mapper, BizBuyAddress entity) {
 		PrintUtil.one("2、直接修改数据： ");
-		mapper.updateEntity(entity);
+		Long result = mapper.updateEntity(entity);
+		PrintUtil.two("2.1、修改结果", "result="+result);
 		SqlSeesionUtil.commit();
 	}
 	private static void showByUpdateByNotNull(UpdateMapper mapper, BizBuyAddress entity) {
 		PrintUtil.one("3、当字段不为null时修改数据： ");
 		entity.setRemark("");
 		entity.setVersionNo(2);
-		mapper.updateByNotNull(entity);
+		Long result = mapper.updateByNotNull(entity);
+		PrintUtil.two("3.1、修改结果", "result="+result);
 		SqlSeesionUtil.commit();
+	}
+}
+```
+
+---
+### <a id="a_delete">六、MyBatis删除数据</a> <a href="#a_update">last</a> <a href="#a_delete">next</a>
+DeleteMapper.java：
+```Java
+package com.mutistic.mybatis.java.delete.mapper;
+import com.mutistic.mybatis.java.model.BizBuyAddress;
+// DeleteMapper 接口
+public interface DeleteMapper {
+	// 根据实体删除数据
+	Long deleteEntity(BizBuyAddress entity);
+
+	// 根据ID删除数据 
+	Long deleteById(Long id);
+}
+```
+DeleteMapper.xml：
+```XML
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Mybatis 3 mapper DTD规范 -->
+<!DOCTYPE mapper 
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mutistic.mybatis.java.delete.mapper.DeleteMapper">
+	<!-- 根据实体删除数据 -->
+	<delete id="deleteEntity" parameterType="BizBuyAddress">
+		DELETE FROM biz_buy_address WHERE id_ = #{id}
+	</delete>
+	<!-- 根据ID删除数据  -->
+	<delete id="deleteById" parameterType="java.lang.Long">
+		DELETE FROM biz_buy_address WHERE id_ = #{id}
+	</delete>
+</mapper>
+```
+DeleteMain.java：
+```Java
+package com.mutistic.mybatis.java.delete;
+import com.mutistic.mybatis.java.delete.mapper.DeleteMapper;
+import com.mutistic.mybatis.java.model.BizBuyAddress;
+import com.mutistic.mybatis.java.utils.SqlSeesionUtil;
+import com.mutistic.mybatis.utils.PrintUtil;
+// MyBatis删除数据
+public class DeleteMain {
+	public static void main(String[] args) {
+		DeleteMapper mapper = SqlSeesionUtil.getMapper(DeleteMapper.class);
+		PrintUtil.one("1、 MyBatis删除数据");
+		showByDeleteEntity(mapper);
+		showByDeleteById(mapper);
+		SqlSeesionUtil.close();
+	}
+	private static void showByDeleteEntity(DeleteMapper mapper) {
+		PrintUtil.one("2、根据实体删除数据：");
+		BizBuyAddress entity = new BizBuyAddress();
+		entity.setId(1029214969835257858l);
+		Long result = mapper.deleteEntity(entity);
+		PrintUtil.two("2.1、删除结果", "result="+ result);
+	}
+	private static void showByDeleteById(DeleteMapper mapper) {
+		PrintUtil.one("3、根据ID删除数据");
+		Long result = mapper.deleteById(1547720793414l);
+		PrintUtil.two("3.1、删除结果", "result="+ result);
 	}
 }
 ```
