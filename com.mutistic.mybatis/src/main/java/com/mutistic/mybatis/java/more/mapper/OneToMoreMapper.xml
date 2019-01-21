@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!-- Mybatis 3 mapper DTD规范 -->
+<!DOCTYPE mapper 
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mutistic.mybatis.java.more.mapper.OneToMoreMapper">
+	<!-- 通过Collection的Select根据外键查询一对多结果集 -->
+	<resultMap id="Collection" type="com.mutistic.mybatis.java.more.dto.OneToMoreDto">
+		<association property="bizUser" resultMap="com.mutistic.mybatis.java.bizuser.mapper.BizUserMapper.BizUserMap"/>
+		<collection property="bizAddressList" column="id_"
+			select="com.mutistic.mybatis.java.select.mapper.SelectMapper.queryByUserId"/>
+	</resultMap>
+	<select id="queryByCollection" parameterType="java.lang.Long" resultMap="Collection">
+		SELECT 
+			id_, name_, account_, password_, mobile_,
+			create_by, create_time, update_by, update_time,
+			remark_, enable_, version_no
+		FROM biz_user
+		WHERE id_ = #{id}
+	</select>
+</mapper>
+  

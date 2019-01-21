@@ -1,10 +1,11 @@
-package com.mutistic.mybatis.java.bizuser.mapper;
+package com.mutistic.mybatis.java.bizuser;
 
+import com.mutistic.mybatis.java.bizuser.mapper.BizUserMapper;
 import com.mutistic.mybatis.java.utils.SqlSeesionUtil;
 import com.mutistic.mybatis.utils.PrintUtil;
 
 /**
- * @program  MyBatis映射关系：一对一
+ * @program  测试BizUser
  * @description
  * @author mutisitic
  * @date 2019年1月17日

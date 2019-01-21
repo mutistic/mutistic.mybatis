@@ -56,6 +56,6 @@ public interface SelectMapper {
 	 * @param userId
 	 * @return
 	 */
-	BizAddress queryByUserId(Long userId);
+	List<BizAddress> queryByUserId(Long userId);
 	
 }

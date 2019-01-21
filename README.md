@@ -17,6 +17,7 @@
 5. <a href="#a_update">MyBatis修改数据</a>
 6. <a href="#a_delete">MyBatis删除数据</a>
 7. <a href="#a_one">MyBatis映射关系：一对一</a>
+8. <a href="#a_more">MyBatis映射关系：一对多</a>
 98. <a href="#a_notes">Notes</a>
 99. <a href="#a_down">down</a>
 
@@ -923,7 +924,7 @@ public class DeleteMain {
 ```
 
 ---
-### <a id="a_one">七、MyBatis映射关系：一对一</a> <a href="#a_delete">last</a> <a href="#">next</a>
+### <a id="a_one">七、MyBatis映射关系：一对一</a> <a href="#a_delete">last</a> <a href="#a_more">next</a>
 OneToOneDto.java：
 ```Java
 package com.mutistic.mybatis.java.one.dto;
@@ -1109,6 +1110,59 @@ public class OneToOneMain {
 		PrintUtil.two("4.1、查询结果：", "dto=" + dto);
 	}
 }
+```
+
+
+---
+### <a id="a_more">八、MyBatis映射关系：一对多</a> <a href="#a_one">last</a> <a href="#">next</a>
+OneToMoreDto.java：
+```Java
+package com.mutistic.mybatis.java.more.dto;
+import java.util.List;
+import com.mutistic.mybatis.java.model.BizAddress;
+import com.mutistic.mybatis.java.model.BizUser;
+// 一对多关系映射DTO对象
+public class OneToMoreDto {
+	/** BizUser对象 */
+	private BizUser bizUser;
+	/** BizAddress集合 */
+	private List<BizAddress> bizAddressList;
+	// ...
+}
+```
+OneToMoreMapper.java：
+```Java
+package com.mutistic.mybatis.java.more.mapper;
+import com.mutistic.mybatis.java.more.dto.OneToMoreDto;
+// OneToMoreMapper 接口
+public interface OneToMoreMapper {
+	// 通过Collection的Select根据外键查询一对多结果集 
+	OneToMoreDto queryByCollection(Long id);
+}
+```
+OneToMoreMapper.xml：
+```XML
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!-- Mybatis 3 mapper DTD规范 -->
+<!DOCTYPE mapper 
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mutistic.mybatis.java.more.mapper.OneToMoreMapper">
+	<!-- 通过Collection的Select根据外键查询一对多结果集 -->
+	<resultMap id="Collection" type="com.mutistic.mybatis.java.more.dto.OneToMoreDto">
+		<association property="bizUser" resultMap="com.mutistic.mybatis.java.bizuser.mapper.BizUserMapper.BizUserMap"/>
+		<collection property="bizAddressList" column="id_"
+			select="com.mutistic.mybatis.java.select.mapper.SelectMapper.queryByUserId"/>
+	</resultMap>
+	<select id="queryByCollection" parameterType="java.lang.Long" resultMap="Collection">
+		SELECT 
+			id_, name_, account_, password_, mobile_,
+			create_by, create_time, update_by, update_time,
+			remark_, enable_, version_no
+		FROM biz_user
+		WHERE id_ = #{id}
+	</select>
+</mapper>
 ```
 
 ---
