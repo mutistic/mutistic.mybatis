@@ -925,6 +925,63 @@ public class DeleteMain {
 
 ---
 ### <a id="a_one">七、MyBatis映射关系：一对一</a> <a href="#a_delete">last</a> <a href="#a_more">next</a>
+BizUser.java：
+```Java
+package com.mutistic.mybatis.java.model;
+// 用户
+ppressWarnings("serial")
+public class BizUser extends BaseModel {
+	/** 用户名 */
+    private String name;
+    /** 账号 */
+    private String account;
+    /** 密码 */
+    private String password;
+    /** 手机号 */
+    private String mobile;
+    // ...
+}
+```
+BizUserMapper.java：
+```Java
+package com.mutistic.mybatis.java.bizuser.mapper;
+import com.mutistic.mybatis.java.model.BizUser;
+// BizUserMapper 接口
+public interface BizUserMapper {
+	// 根据ID查询数据 
+	BizUser queryById(Long id);
+}
+```
+BizUserMapper.xml：
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper 
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mutistic.mybatis.java.bizuser.mapper.BizUserMapper">
+	<resultMap id="BizUserMap" type="BizUser">
+		<id column="id_" property="id" />
+		<result column="name_" property="name" />
+		<result column="account_" property="account" />
+		<result column="password_" property="password" />
+		<result column="mobile_" property="mobile" />
+		<result column="create_by" property="createBy" />
+		<result column="create_time" property="createTime" />
+		<result column="update_by" property="updateBy" />
+		<result column="update_time" property="updateTime" />
+		<result column="remark_" property="remark" />
+		<result column="enable_" property="enable" />
+		<result column="version_no" property="versionNo" />
+	</resultMap>
+	<select id="queryById" parameterType="java.lang.Long" resultMap="BizUserMap">
+		SELECT 
+			id_, name_, account_, password_, mobile_,
+			create_by, create_time, update_by, update_time,
+			remark_, enable_, version_no
+		FROM biz_user
+		WHERE id_ = #{id}
+	</select>
+</mapper>
+```
 OneToOneDto.java：
 ```Java
 package com.mutistic.mybatis.java.one.dto;
@@ -1047,10 +1104,11 @@ OneToOneMapper.xml：
   </resultMap>
   <select id="queryByAssociationResultMap" parameterType="java.lang.Long" resultMap="AssociationResultMap">
     SELECT 
-        bizUser.id_, bizUser.name_, bizUser.account_, bizUser.password_, bizUser.mobile_,
+      bizUser.id_, bizUser.name_, bizUser.account_, bizUser.password_, bizUser.mobile_,
       bizUser.create_by, bizUser.create_time, bizUser.update_by, bizUser.update_time,
       bizUser.remark_, bizUser.enable_, bizUser.version_no,
-      bizAddress.id_, bizAddress.user_id, bizAddress.consignee_name, bizAddress.consignee_mobile, bizAddress.consignee_address,
+      bizAddress.id_, bizAddress.user_id, bizAddress.consignee_name, 
+      bizAddress.consignee_mobile, bizAddress.consignee_address,
       bizAddress.province_code, bizAddress.city_code, bizAddress.county_code, bizAddress.is_default,
       bizAddress.create_by, bizAddress.create_time, bizAddress.update_by, bizAddress.update_time,
       bizAddress.remark_, bizAddress.enable_, bizAddress.version_no
