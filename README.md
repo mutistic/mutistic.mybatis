@@ -18,6 +18,7 @@
 6. <a href="#a_delete">MyBatis删除数据</a>
 7. <a href="#a_one">MyBatis映射关系：一对一</a>
 8. <a href="#a_more">MyBatis映射关系：一对多</a>
+9. <a href="#a_dynamic">MyBatis动态SQL</a>
 98. <a href="#a_notes">Notes</a>
 99. <a href="#a_down">down</a>
 
@@ -1170,9 +1171,8 @@ public class OneToOneMain {
 }
 ```
 
-
 ---
-### <a id="a_more">八、MyBatis映射关系：一对多</a> <a href="#a_one">last</a> <a href="#">next</a>
+### <a id="a_more">八、MyBatis映射关系：一对多</a> <a href="#a_one">last</a> <a href="#a_dynamic">next</a>
 OneToMoreDto.java：
 ```Java
 package com.mutistic.mybatis.java.more.dto;
@@ -1222,6 +1222,155 @@ OneToMoreMapper.xml：
   </select>
 </mapper>
 ```
+
+---
+### <a id="a_dynamic">九、MyBatis动态SQL</a> <a href="#a_more">last</a> <a href="#">next</a>
+DynamicMapper.java：
+```Java
+package com.mutistic.mybatis.java.dynamic.mapper;
+import java.util.List;
+import java.util.Map;
+import com.mutistic.mybatis.java.model.BizUser;
+// DynamicMapper 接口
+public interface DynamicMapper {
+	// 动态SQL：WHERE、IF、choose、foreach
+	List<BizUser> queryByDynamic(Map<String, Object> param);
+	// 动态SQL：Trim
+	List<BizUser> queryByTrim(Map<String, Object> param);
+	// 动态SQL：Set
+	Long updateBySet(BizUser entity);
+}
+```
+DynamicMapper.xml：
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper 
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.mutistic.mybatis.java.dynamic.mapper.DynamicMapper">
+	<resultMap id="resultMap" type="BizUser">
+		<id column="id_" property="id" />
+		<result column="name_" property="name" />
+		<result column="account_" property="account" />
+		<result column="password_" property="password" />
+		<result column="mobile_" property="mobile" />
+		<result column="create_by" property="createBy" />
+		<result column="create_time" property="createTime" />
+		<result column="update_by" property="updateBy" />
+		<result column="update_time" property="updateTime" />
+		<result column="remark_" property="remark" />
+		<result column="enable_" property="enable" />
+		<result column="version_no" property="versionNo" />
+	</resultMap>
+	<sql id="column">
+		id_, name_, account_, password_, mobile_, status_,
+		create_by, create_time, update_by, update_time,
+		remark_,enable_,version_no
+	</sql>
+	<!-- 动态SQL：WHERE、IF、choose、foreach -->
+	<select id="queryByDynamic" parameterType="java.util.Map"
+		resultMap="resultMap">
+		SELECT
+		<include refid="column" />
+		FROM biz_user
+		<where>
+			<if test="id != null"> AND id_ = #{id} </if>
+			<if test="name != null and name != ''"> AND name_ = #{name} </if>
+			<choose>
+				<when test="statusType=1"> AND status_ IN (0, 1,2)</when>
+				<when test="statusType=2"> AND status_ IN (0,1)</when>
+				<otherwise>AND status_ IN (1,2) </otherwise>
+			</choose>
+			<if test="statusList != null">
+				AND status_ IN
+				<foreach collection="statusList" item="key" separator=","
+					open="(" close=")">
+					${key}
+				</foreach>
+			</if>
+		</where>
+	</select>
+	<!-- 动态SQL：Trim -->
+	<select id="queryByTrim" parameterType="java.util.Map"
+		resultMap="resultMap">
+		SELECT
+		<include refid="column" />
+		FROM biz_user
+		<trim prefix="WHERE" prefixOverrides="AND">
+			<if test="id != null"> AND id_ = #{id} </if>
+			<if test="name != null and name != ''"> AND name_ = #{name} </if>
+		</trim>
+	</select>
+	<!-- 动态SQL：Set -->
+	<update id="updateBySet" parameterType="BizUser">
+		UPDATE biz_user
+		<!-- <trim prefix="SET" suffixOverrides=","></trim> -->
+		<set>
+			<if test="name != null"> name_ = #{name}, </if>
+			<if test="account != null"> account_ = #{account}, </if>
+			<if test="password != null"> password_ = #{password}, </if>
+			<if test="mobile != null"> mobile_ = #{mobile}, </if>
+			<if test="status != null"> status_ = #{status}, </if>
+			<if test="createBy != null"> create_by = #{createBy}, </if>
+			<if test="createTime != null"> create_time = #{createTime}, </if>
+			<if test="updateBy != null"> update_by = #{updateBy}, </if>
+			<if test="updateTime != null"> update_time = #{updateTime}, </if>
+			<if test="remark != null"> remark_ = #{remark}, </if>
+			<if test="enable != null"> enable_ = #{enable}, </if>
+			<if test="versionNo != null"> version_no = #{versionNo}, </if>
+		</set>
+		WHERE id_ = #{id}
+	</update>
+</mapper>
+```
+DynamicMain.java：
+```Java
+package com.mutistic.mybatis.java.dynamic;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import com.mutistic.mybatis.java.dynamic.mapper.DynamicMapper;
+import com.mutistic.mybatis.java.model.BizUser;
+import com.mutistic.mybatis.java.utils.SqlSeesionUtil;
+import com.mutistic.mybatis.utils.PrintUtil;
+// MyBatis动态SQL
+public class DynamicMain {
+	public static void main(String[] args) {
+		DynamicMapper mapper = SqlSeesionUtil.getMapper(DynamicMapper.class);
+		PrintUtil.one("1、 MyBatis动态SQL");
+
+		showByQueryByDynamic(mapper);
+		BizUser user = showByQueryByTrim(mapper);
+		showByUpdateBySet(mapper, user);
+		SqlSeesionUtil.close();
+	}
+	private static void showByQueryByDynamic(DynamicMapper mapper) {
+		PrintUtil.one("2、动态SQL：WHERE、IF、choose、foreach");
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("statusList", new Integer[] {0,1,2});
+		param.put("statusType", 1);
+		List<BizUser> userList = mapper.queryByDynamic(param);
+		PrintUtil.two("2.1、查询结果：", userList);
+	}
+	private static BizUser showByQueryByTrim(DynamicMapper mapper) {
+		PrintUtil.one("3、动态SQL：Trim");
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("id", 111111l);
+		List<BizUser> userList = mapper.queryByTrim(param);
+		PrintUtil.two("3.1、查询结果：", userList);
+		return userList.get(0);
+	}
+	private static void showByUpdateBySet(DynamicMapper mapper, BizUser entity) {
+		PrintUtil.one("4、动态SQL：Set");
+		
+		entity.setRemark("");
+		entity.setPassword(null);
+		Long result = mapper.updateBySet(entity);
+		PrintUtil.two("4.1、修改结果：", result);
+	}
+}
+```
+
 
 ---
 ### <a id="a_notes">[Notes](https://github.com/mutistic/mutistic.mybatis/blob/master/com.mutistic.mybatis/notes)</a> <a href="#top">last</a> <a href="#a_catalogue">next</a>

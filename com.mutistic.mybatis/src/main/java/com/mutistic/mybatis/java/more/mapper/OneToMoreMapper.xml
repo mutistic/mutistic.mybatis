@@ -12,7 +12,7 @@
 	</resultMap>
 	<select id="queryByCollection" parameterType="java.lang.Long" resultMap="Collection">
 		SELECT 
-			id_, name_, account_, password_, mobile_,
+			id_, name_, account_, password_, mobile_,status_,
 			create_by, create_time, update_by, update_time,
 			remark_, enable_, version_no
 		FROM biz_user

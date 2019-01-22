@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper 
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.mutistic.mybatis.java.dynamic.mapper.DynamicMapper">
+	<resultMap id="resultMap" type="BizUser">
+		<id column="id_" property="id" />
+		<result column="name_" property="name" />
+		<result column="account_" property="account" />
+		<result column="password_" property="password" />
+		<result column="mobile_" property="mobile" />
+		<result column="create_by" property="createBy" />
+		<result column="create_time" property="createTime" />
+		<result column="update_by" property="updateBy" />
+		<result column="update_time" property="updateTime" />
+		<result column="remark_" property="remark" />
+		<result column="enable_" property="enable" />
+		<result column="version_no" property="versionNo" />
+	</resultMap>
+
+	<sql id="column">
+		id_, name_, account_, password_, mobile_, status_,
+		create_by, create_time, update_by, update_time,
+		remark_,enable_,version_no
+	</sql>
+
+	<!-- 动态SQL：WHERE、IF、choose、foreach -->
+	<select id="queryByDynamic" parameterType="java.util.Map"
+		resultMap="resultMap">
+		SELECT
+		<include refid="column" />
+		FROM biz_user
+		<where>
+			<if test="id != null"> AND id_ = #{id} </if>
+			<if test="name != null and name != ''"> AND name_ = #{name} </if>
+			<choose>
+				<when test="statusType=1"> AND status_ IN (0, 1,2)</when>
+				<when test="statusType=2"> AND status_ IN (0,1)</when>
+				<otherwise>AND status_ IN (1,2) </otherwise>
+			</choose>
+			<if test="statusList != null">
+				AND status_ IN
+				<foreach collection="statusList" item="key" separator=","
+					open="(" close=")">
+					${key}
+				</foreach>
+			</if>
+		</where>
+	</select>
+
+	<!-- 动态SQL：Trim -->
+	<select id="queryByTrim" parameterType="java.util.Map"
+		resultMap="resultMap">
+		SELECT
+		<include refid="column" />
+		FROM biz_user
+		<trim prefix="WHERE" prefixOverrides="AND">
+			<if test="id != null"> AND id_ = #{id} </if>
+			<if test="name != null and name != ''"> AND name_ = #{name} </if>
+		</trim>
+	</select>
+
+	<!-- 动态SQL：Set -->
+	<update id="updateBySet" parameterType="BizUser">
+		UPDATE biz_user
+		<!-- <trim prefix="SET" suffixOverrides=","></trim> -->
+		<set>
+			<if test="name != null">
+				name_ = #{name},
+			</if>
+			<if test="account != null">
+				account_ = #{account},
+			</if>
+			<if test="password != null">
+				password_ = #{password},
+			</if>
+			<if test="mobile != null">
+				mobile_ = #{mobile},
+			</if>
+			<if test="status != null">
+				status_ = #{status},
+			</if>
+			<if test="createBy != null">
+				create_by = #{createBy},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime},
+			</if>
+			<if test="updateBy != null">
+				update_by = #{updateBy},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime},
+			</if>
+			<if test="remark != null">
+				remark_ = #{remark},
+			</if>
+			<if test="enable != null">
+				enable_ = #{enable},
+			</if>
+			<if test="versionNo != null">
+				version_no = #{versionNo},
+			</if>
+		</set>
+		WHERE id_ = #{id}
+	</update>
+</mapper>
+  

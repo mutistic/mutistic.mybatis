@@ -12,6 +12,7 @@
 		<result column="account_" property="bizUser.account" />
 		<result column="password_" property="bizUser.password" />
 		<result column="mobile_" property="bizUser.mobile" />
+		<result column="status_" property="bizUser.status" />
 		<result column="create_by" property="bizUser.createBy" />
 		<result column="create_time" property="bizUser.createTime" />
 		<result column="update_by" property="bizUser.updateBy" />
@@ -39,7 +40,7 @@
 	</resultMap>
 	<select id="queryByResultMap" parameterType="java.lang.Long" resultMap="ResultMap">
 		SELECT 
-		    bizUser.id_, bizUser.name_, bizUser.account_, bizUser.password_, bizUser.mobile_,
+		    bizUser.id_, bizUser.name_, bizUser.account_, bizUser.password_, bizUser.mobile_, bizUser.status_,
 			bizUser.create_by, bizUser.create_time, bizUser.update_by, bizUser.update_time,
 			bizUser.remark_, bizUser.enable_, bizUser.version_no,
 			bizAddress.id_, bizAddress.user_id, bizAddress.consignee_name, bizAddress.consignee_mobile, bizAddress.consignee_address,
@@ -62,6 +63,7 @@
 		<result column="account_" property="account" />
 		<result column="password_" property="password" />
 		<result column="mobile_" property="mobile" />
+		<result column="status_" property="status" />
 		<result column="create_by" property="createBy" />
 		<result column="create_time" property="createTime" />
 		<result column="update_by" property="updateBy" />
@@ -90,7 +92,7 @@
 	</resultMap>
 	<select id="queryByAssociationResultMap" parameterType="java.lang.Long" resultMap="AssociationResultMap">
 		SELECT 
-		    bizUser.id_, bizUser.name_, bizUser.account_, bizUser.password_, bizUser.mobile_,
+		    bizUser.id_, bizUser.name_, bizUser.account_, bizUser.password_, bizUser.mobile_, bizUser.status_,
 			bizUser.create_by, bizUser.create_time, bizUser.update_by, bizUser.update_time,
 			bizUser.remark_, bizUser.enable_, bizUser.version_no,
 			bizAddress.id_, bizAddress.user_id, bizAddress.consignee_name, bizAddress.consignee_mobile, bizAddress.consignee_address,
@@ -110,7 +112,7 @@
 	</resultMap>
 	<select id="queryByAssociationSelect" parameterType="java.lang.Long" resultMap="AssociationSelect">
 		SELECT 
-		   id_, user_id, consignee_name, consignee_mobile, consignee_address,
+		    id_, user_id, consignee_name, consignee_mobile, consignee_address,
 			province_code, city_code, county_code, is_default,
 			create_by, create_time, update_by, update_time,
 			remark_, enable_, version_no

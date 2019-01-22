@@ -12,6 +12,7 @@
 		<result column="account_" property="account" />
 		<result column="password_" property="password" />
 		<result column="mobile_" property="mobile" />
+		<result column="status_" property="status" />
 		<result column="create_by" property="createBy" />
 		<result column="create_time" property="createTime" />
 		<result column="update_by" property="updateBy" />
@@ -23,7 +24,7 @@
 
 	<select id="queryById" parameterType="java.lang.Long" resultMap="BizUserMap">
 		SELECT 
-			id_, name_, account_, password_, mobile_,
+			id_, name_, account_, password_, mobile_,status_,
 			create_by, create_time, update_by, update_time,
 			remark_, enable_, version_no
 		FROM biz_user

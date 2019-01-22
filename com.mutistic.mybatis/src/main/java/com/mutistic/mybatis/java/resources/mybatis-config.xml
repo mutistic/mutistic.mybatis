@@ -47,5 +47,6 @@
 		<mapper resource="com/mutistic/mybatis/java/bizuser/mapper/BizuserMapper.xml" />
 		<mapper resource="com/mutistic/mybatis/java/one/mapper/OneToOneMapper.xml" />
 		<mapper resource="com/mutistic/mybatis/java/more/mapper/OneToMoreMapper.xml" />
+		<mapper resource="com/mutistic/mybatis/java/dynamic/mapper/DynamicMapper.xml"/>
 	</mappers>
 </configuration>
