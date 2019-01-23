@@ -5,6 +5,16 @@
  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.mutistic.mybatis.java.bizuser.mapper.BizUserMapper">
+	
+	<!-- 
+		二级缓存配置：
+		size：表示缓存cache中能容纳的最大元素的个数。默认1024个
+		flushInterval：定义缓存刷新周期，单位毫秒
+		eviction：定义缓存的移除机制：默认LRU(least recently userd：最近最少使用算法)。
+			FIFO(first in first out：先进先出算法)
+		readOnly：默认false，可读可写。设置为true只读	
+	 -->
+	<cache size="1024" flushInterval="6000000" eviction="LRU" readOnly="false"/>
 
 	<resultMap id="BizUserMap" type="BizUser">
 		<id column="id_" property="id" />
@@ -22,7 +32,7 @@
 		<result column="version_no" property="versionNo" />
 	</resultMap>
 
-	<select id="queryById" parameterType="java.lang.Long" resultMap="BizUserMap">
+	<select id="queryById" parameterType="java.lang.Long" resultMap="BizUserMap" flushCache="false" useCache="true">
 		SELECT 
 			id_, name_, account_, password_, mobile_,status_,
 			create_by, create_time, update_by, update_time,
