@@ -21,6 +21,7 @@
 9. <a href="#a_dynamic">MyBatis动态SQL</a>
 10. <a href="#a_other">MyBatis处理Blob/Clob数据类型</a>
 11. <a href="#a_pagination">MyBatis分页查询</a>
+12. <a href="#a_annotation">MyBatis使用注解实现CRUD与关联查询</a>
 98. <a href="#a_notes">Notes</a>
 99. <a href="#a_down">down</a>
 
@@ -317,7 +318,7 @@ public class BaseModel implements Serializable {
   private String orderBy;
   /** 排序规则 */
   private String sortAsc;
-  // ...
+  // get/set
 }
 ```
 BizBuyAddress.java：
@@ -342,7 +343,7 @@ public class BizBuyAddress extends BaseModel {
   private String countyCode;
   /** 是否默认地址：0-非默认，1-默认 */
   private Integer isDefault;
-  // ...
+  // get/set
 }
 ```
 InsertMapper.java：
@@ -478,7 +479,7 @@ public class Pagination<T> implements Serializable {
   private Integer pages;
   /** 当前页数据 */
   private List<T> records;
-  // ...
+  // get/set
 }
 ```
 SelectMapper.java：
@@ -942,7 +943,7 @@ public class BizUser extends BaseModel {
     private String password;
     /** 手机号 */
     private String mobile;
-    // ...
+    // get/set
 }
 ```
 BizUserMapper.java：
@@ -998,7 +999,7 @@ public class OneToOneDto implements Serializable {
   private BizUser bizUser;
   /** BizAddress对象 */
   private BizAddress bizAddress;
-  // ... 
+  // get/set 
 }
 ```
 OneToOneMapper.java：
@@ -1187,7 +1188,7 @@ public class OneToMoreDto {
   private BizUser bizUser;
   /** BizAddress集合 */
   private List<BizAddress> bizAddressList;
-  // ...
+  // get/set
 }
 ```
 OneToMoreMapper.java：
@@ -1387,7 +1388,7 @@ public class BizTest {
 	private byte[] longBlob;
 	/** String 对应Mysql数据库 longclob */
 	private String longClob;
-	// ...
+	// get/set
 }
 ```
 OtherMapper.java：
@@ -1503,7 +1504,7 @@ public class OtherMain {
 ```
 
 ---
-### <a id="a_pagination">十一、MyBatis分页查询</a> <a href="#a_other">last</a> <a href="#">next</a>
+### <a id="a_pagination">十一、MyBatis分页查询</a> <a href="#a_other">last</a> <a href="#a_annotation">next</a>
 BizTest.java：
 ```Java
 package com.mutistic.mybatis.java.pagination.mapper;
@@ -1597,6 +1598,225 @@ public class PaginationMain {
 		List<BizAddress> pageList = entityList.subList(limit * offset,
 				entityList.size() > toIndex ? toIndex : entityList.size());
 		PrintUtil.two("4.2、 Java内存假分页结果", "pageSize=" + pageList.size() + ", pageList=" + entityList);
+	}
+}
+```
+
+---
+### <a id="a_annotation">十二、MyBatis使用注解实现CRUD与关联查询</a> <a href="#a_pagination">last</a> <a href="#">next</a>
+BizAnnotation.java：
+```Java
+package com.mutistic.mybatis.java.annotation.mode;
+public class BizAnnotation {
+	private Long id;
+	private String name;
+	private Integer age;
+	private List<BizMore> bizMoreList;
+	// get/set
+}
+```
+AnnotationMapper.java：
+```Java
+package com.mutistic.mybatis.java.annotation.mapper;
+import java.util.List;
+import java.util.Map;
+import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Result;
+import org.apache.ibatis.annotations.ResultMap;
+import org.apache.ibatis.annotations.Results;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
+import com.mutistic.mybatis.java.annotation.mode.BizAnnotation;
+// AnnotationMapper接口
+public interface AnnotationMapper {
+	// 使用@Insert注解实现数据新增
+	@Insert("INSERT INTO biz_annotation(id_, name_, age_) VALUES(#{id}, #{name}, #{age})")
+	Long insertEntity(BizAnnotation entity);
+	// 使用@Update注解实现数据修改
+	@Update("UPDATE biz_annotation SET name_ = #{name}, age_ = #{age} WHERE id_ = #{id}")
+	Long updateEntity(BizAnnotation entity);
+	// 使用@Delete注解实现数据删除
+	@Delete("DELETE FROM biz_annotation WHERE id_ = #{id}")
+	Long deleteEntity(Long id);
+
+	// 使用@Selete注解实现数据查询
+	@Select("SELECT id_, name_, age_ FROM biz_annotation WHERE id_ = #{id}")
+	// 使用@Results映射查询结果
+	@Results(id = "annotationResult", value={
+		@Result(id=true, column="id_", property="id"),
+		@Result(column="name_", property="name"),
+		@Result(column="age_", property="age")
+	})
+	BizAnnotation queryById(Long id);
+
+	// 使用@Selete注解和<script>实现动态查询
+	@Select({ 
+		"<script>",  // 使用<script>实现动态SQL
+		"SELECT id_, name_, age_ FROM biz_annotation", 
+		"<where>",
+		"<if test=\"id!=null\">AND id_= #{id}</if>",
+		"<if test=\"name!=null and name != ''\">AND name_ = #{name}</if>",
+		"<if test=\"age!=null\">AND age_ = #{age}</if>",
+		"</where>",
+		"</script>" 
+		})
+	// 使用@ResultMap 绑定声明的@Results，实现复用
+	@ResultMap("annotationResult")
+	List<BizAnnotation> queryList(Map<String, Object> param);
+}
+```
+AnnotationMain.java：
+```Java
+package com.mutistic.mybatis.java.annotation;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import com.mutistic.mybatis.java.annotation.mapper.AnnotationMapper;
+import com.mutistic.mybatis.java.utils.SqlSeesionUtil;
+import com.mutistic.mybatis.utils.PrintUtil;
+import com.mutistic.mybatis.java.annotation.mode.BizAnnotation;
+// MyBatis使用注解实现CRUD
+public class AnnotationMain {
+	public static void main(String[] args) {
+		AnnotationMapper mapper = SqlSeesionUtil.getMapper(AnnotationMapper.class);
+		PrintUtil.one("1、 MyBatis使用注解实现CRUD");
+
+		showByQueryById(mapper);
+		showByQueryList(mapper);
+		BizAnnotation entity = showByInsert(mapper);
+		showByUpdate(mapper, entity);
+		showByDelete(mapper);
+		SqlSeesionUtil.close();
+	}
+	private static void showByQueryById(AnnotationMapper mapper) {
+		PrintUtil.one("2、使用@Selete注解实现数据查询：");
+		
+		BizAnnotation entity = mapper.queryById(1548225605590l);
+		PrintUtil.two("2.1、查询結果：", entity);
+	}
+	private static void showByQueryList(AnnotationMapper mapper) {
+		PrintUtil.one("3、使用@Selete注解和<script>实现动态查询：");
+		
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("age", 18);
+		List<BizAnnotation> entityList = mapper.queryList(param);
+ 		PrintUtil.two("3.1、查询結果：", entityList);
+	}
+	private static BizAnnotation showByInsert(AnnotationMapper mapper) {
+		PrintUtil.one("4、使用@Insert注解实现数据新增：");
+		
+		BizAnnotation entity = new BizAnnotation();
+		entity.setId(System.currentTimeMillis());
+		entity.setName("test");
+		entity.setAge(18);
+		
+		Long result = mapper.insertEntity(entity);
+		PrintUtil.two("4.1、新增结果：", result);
+		SqlSeesionUtil.commit();
+		return entity;
+	}
+	private static void showByUpdate(AnnotationMapper mapper, BizAnnotation entity) {
+		PrintUtil.one("5、使用@Update注解实现数据修改：");
+		
+		entity.setName("张三");
+		Long result = mapper.updateEntity(entity);
+		PrintUtil.two("5.1、修改结果：", result);
+		SqlSeesionUtil.commit();
+	}
+	private static void showByDelete(AnnotationMapper mapper) {
+		PrintUtil.one("6、使用@Delete注解实现数据删除：");
+		
+		Long result = mapper.deleteEntity(1548225597700l);
+		PrintUtil.two("6.1、删除结果：", result);
+		SqlSeesionUtil.commit();
+	}
+}
+```
+BizMore.java：
+```Java
+package com.mutistic.mybatis.java.annotation.mode;
+// 配合关系映射 
+public class BizMore {
+	private Long id;
+	private Long annotationId;
+	private String remark;
+	private BizAnnotation bizAnnotation;
+	// get/set
+}
+```
+RelevanceMapper.java：
+```Java
+package com.mutistic.mybatis.java.annotation.mapper;
+import java.util.List;
+import org.apache.ibatis.annotations.Many;
+import org.apache.ibatis.annotations.One;
+import org.apache.ibatis.annotations.Result;
+import org.apache.ibatis.annotations.Results;
+import org.apache.ibatis.annotations.Select;
+import com.mutistic.mybatis.java.annotation.mode.BizAnnotation;
+import com.mutistic.mybatis.java.annotation.mode.BizMore;
+// 使用注解实现关联查询
+public interface RelevanceMapper {
+	// 使用@One注解实现一对一关联查询
+	@Select("SELECT id_, annotation_id, remark FROM biz_more WHERE id_ = #{id}")
+	@Results({
+		@Result(id=true, column="id_", property="id"),
+		@Result(column="annotation_id", property="annotationId"),
+		@Result(column="remark", property="remark"),
+		// 使用@One实现一对一关联查询
+		@Result(column="annotation_id", property="bizAnnotation",
+			one=@One(select="com.mutistic.mybatis.java.annotation.mapper.AnnotationMapper.queryById"))
+	})
+	BizMore queryByOneToOne(Long id);
+	// 使用@Many注解实现一对多关联查询
+	@Select("SELECT id_, name_, age_ FROM biz_annotation WHERE id_ = #{id}")
+	@Results(id = "annotationResult", value={
+			@Result(id=true, column="id_", property="id"),
+			@Result(column="name_", property="name"),
+			@Result(column="age_", property="age"),
+			// 使用@Many注解实现一对多关联查询
+			@Result(column="id_", property="bizMoreList",
+				many=@Many(select="com.mutistic.mybatis.java.annotation.mapper.RelevanceMapper.queryByAnnontationId"))
+		})
+	BizAnnotation queryByOneToMore(Long id);
+	
+	@Select("SELECT id_, annotation_id, remark FROM biz_more WHERE annotation_id = #{annotationId}")
+	@Results({
+		@Result(id=true, column="id_", property="id"),
+		@Result(column="annotation_id", property="annotationId"),
+		@Result(column="remark", property="remark"),
+	})
+	List<BizMore> queryByAnnontationId(Long annotationId);
+}
+```
+RelevanceMain.java：
+```Java
+package com.mutistic.mybatis.java.annotation;
+import com.mutistic.mybatis.java.annotation.mapper.RelevanceMapper;
+import com.mutistic.mybatis.java.annotation.mode.BizAnnotation;
+import com.mutistic.mybatis.java.annotation.mode.BizMore;
+import com.mutistic.mybatis.java.utils.SqlSeesionUtil;
+import com.mutistic.mybatis.utils.PrintUtil;
+// MyBatis使用注解实现关联查询
+public class RelevanceMain {
+	public static void main(String[] args) {
+		RelevanceMapper mapper = SqlSeesionUtil.getMapper(RelevanceMapper.class);
+		PrintUtil.one("1、 MyBatis使用注解实现关联查询");
+		showByOneToOne(mapper);
+		showByOneToMore(mapper);
+		SqlSeesionUtil.close();
+	}
+	private static void showByOneToOne(RelevanceMapper mapper) {
+		PrintUtil.one("2、使用@One注解实现一对一关联查询：");
+
+		BizMore entity = mapper.queryByOneToOne(111111l);
+		PrintUtil.two("2.1、查询结果：", "BizMore=" + entity + ", BizAnnotation=" + entity.getBizAnnotation());
+	}
+	private static void showByOneToMore(RelevanceMapper mapper) {
+		PrintUtil.one("3、使用@Many注解实现一对多关联查询：");
+		BizAnnotation entity = mapper.queryByOneToMore(1548226948040l);
+		PrintUtil.two("3.1、查询结果：", "BizAnnotation=" + entity + ", BizMoreList=" + entity.getBizMoreList());
 	}
 }
 ```

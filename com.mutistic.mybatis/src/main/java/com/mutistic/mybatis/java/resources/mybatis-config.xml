@@ -51,5 +51,7 @@
 		<mapper resource="com/mutistic/mybatis/java/dynamic/mapper/DynamicMapper.xml"/>
 		<mapper resource="com/mutistic/mybatis/java/other/mapper/OtherMapper.xml"/>
 		<mapper resource="com/mutistic/mybatis/java/pagination/mapper/PaginationMapper.xml"/>
+		<mapper class="com.mutistic.mybatis.java.annotation.mapper.AnnotationMapper"/>
+		<mapper class="com.mutistic.mybatis.java.annotation.mapper.RelevanceMapper"/>
 	</mappers>
 </configuration>
