@@ -50,5 +50,6 @@
 		<mapper resource="com/mutistic/mybatis/java/more/mapper/OneToMoreMapper.xml" />
 		<mapper resource="com/mutistic/mybatis/java/dynamic/mapper/DynamicMapper.xml"/>
 		<mapper resource="com/mutistic/mybatis/java/other/mapper/OtherMapper.xml"/>
+		<mapper resource="com/mutistic/mybatis/java/pagination/mapper/PaginationMapper.xml"/>
 	</mappers>
 </configuration>
