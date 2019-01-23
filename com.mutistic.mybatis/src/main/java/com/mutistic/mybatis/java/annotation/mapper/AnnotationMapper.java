@@ -60,7 +60,7 @@ public interface AnnotationMapper {
 	 */
 	@Select("SELECT id_, name_, age_ FROM biz_annotation WHERE id_ = #{id}")
 	// 使用@Results映射查询结果
-	@Results(id = "annotationResult", value={
+	@Results(id = "BizAnnotationResult", value={
 		@Result(id=true, column="id_", property="id"),
 		@Result(column="name_", property="name"),
 		@Result(column="age_", property="age")
@@ -85,6 +85,6 @@ public interface AnnotationMapper {
 		"</script>" 
 		})
 	// 使用@ResultMap 绑定声明的@Results，实现复用
-	@ResultMap("annotationResult")
+	@ResultMap("BizAnnotationResult")
 	List<BizAnnotation> queryList(Map<String, Object> param);
 }

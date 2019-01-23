@@ -1604,6 +1604,7 @@ public class PaginationMain {
 
 ---
 ### <a id="a_annotation">十二、MyBatis使用注解实现CRUD与关联查询</a> <a href="#a_pagination">last</a> <a href="#">next</a>
+#### 1、MyBatis使用注解实现CRUD：  
 BizAnnotation.java：
 ```Java
 package com.mutistic.mybatis.java.annotation.mode;
@@ -1643,7 +1644,7 @@ public interface AnnotationMapper {
 	// 使用@Selete注解实现数据查询
 	@Select("SELECT id_, name_, age_ FROM biz_annotation WHERE id_ = #{id}")
 	// 使用@Results映射查询结果
-	@Results(id = "annotationResult", value={
+	@Results(id = "BizAnnotationResult", value={
 		@Result(id=true, column="id_", property="id"),
 		@Result(column="name_", property="name"),
 		@Result(column="age_", property="age")
@@ -1662,7 +1663,7 @@ public interface AnnotationMapper {
 		"</script>" 
 		})
 	// 使用@ResultMap 绑定声明的@Results，实现复用
-	@ResultMap("annotationResult")
+	@ResultMap("BizAnnotationResult")
 	List<BizAnnotation> queryList(Map<String, Object> param);
 }
 ```
@@ -1733,6 +1734,7 @@ public class AnnotationMain {
 	}
 }
 ```
+#### 2、MyBatis使用注解实现关联查询：  
 BizMore.java：
 ```Java
 package com.mutistic.mybatis.java.annotation.mode;
@@ -1820,7 +1822,183 @@ public class RelevanceMain {
 	}
 }
 ```
+#### 3、MyBatis使用@SelectProvider等注解实现CRUD：  
+ProviderMapper.java：
+```Java
+package com.mutistic.mybatis.java.provider.mapper;
+import java.util.List;
+import java.util.Map;
+import org.apache.ibatis.annotations.DeleteProvider;
+import org.apache.ibatis.annotations.InsertProvider;
+import org.apache.ibatis.annotations.ResultMap;
+import org.apache.ibatis.annotations.SelectProvider;
+import org.apache.ibatis.annotations.UpdateProvider;
+import com.mutistic.mybatis.java.annotation.mode.BizAnnotation;
+// ProviderMapper 接口
+public interface ProviderMapper {
+	// 使用@InsertProvider注解实现数据新增
+	@InsertProvider(type=BizAnnotationSqlProvider.class, method="insertEntity")
+	Long insertEntity(BizAnnotation entity);
+	// 使用@UpdateProvider注解实现数据修改
+	@UpdateProvider(type=BizAnnotationSqlProvider.class, method="updateEntity")
+	Long updateEntity(BizAnnotation entity);
+	// 使用@DeleteProvider注解实现删除
+	@DeleteProvider(type=BizAnnotationSqlProvider.class, method="deleteEntity")
+	Long deleteEntity(Long id);
+	// 使用@SelectProvider注解实现查询
+	@SelectProvider(type=BizAnnotationSqlProvider.class, method="queryById")
+	// 非此Mapper定义的resultMap时，需要指定ResultMap全限定名
+	@ResultMap("com.mutistic.mybatis.java.annotation.mapper.AnnotationMapper.BizAnnotationResult")
+	BizAnnotation queryById(Long id);
+	// 使用@SelectProvider注解实现数据集合查询
+	@SelectProvider(type=BizAnnotationSqlProvider.class, method="queryList")
+	@ResultMap("com.mutistic.mybatis.java.annotation.mapper.AnnotationMapper.BizAnnotationResult")
+	List<BizAnnotation> queryList(Map<String, Object> param);
+}
+```
+BizAnnotationSqlProvider.java：
+```Java
+package com.mutistic.mybatis.java.provider.mapper;
+import java.util.Map;
+import org.apache.ibatis.jdbc.SQL;
+import com.mutistic.mybatis.java.annotation.mode.BizAnnotation;
+// SqlProvider动态拼接SQL实现类
+public class BizAnnotationSqlProvider {
+	// 新增数据的拼接SQL方法
+	public String insertEntity(final BizAnnotation entity) {
+		return new SQL() {
+			{
+				INSERT_INTO("biz_annotation");
+				VALUES("id_", entity.getId() + "");
+				VALUES("name_", "'" + entity.getName() + "'");
+				VALUES("age_", entity.getAge() + "");
+			}
+		}.toString();
+	}
+	// 修改数据的拼接SQL方法
+	public String updateEntity(final BizAnnotation entity) {
+		return new SQL() {
+			{
+				UPDATE("biz_annotation");
+				if (entity.getName() != null) {
+					SET("name_ = '" + entity.getName() + "'");
+				}
+				if (entity.getAge() != null) {
+					SET("age_ = " + entity.getAge());
+				}
+				WHERE("id_ = " + entity.getId());
+			}
+		}.toString();
+	}
+	// 删除数据的拼接SQL方法
+	public String deleteEntity() {
+		return new SQL() {
+			{
+				DELETE_FROM("biz_annotation");
+				WHERE("id_ = #{id}");
+			}
+		}.toString();
+	}
+	// 根据ID查询数据的拼接SQL方法
+	public String queryById(final Long id) {
+		return new SQL() {
+			{
+				SELECT("id_, name_, age_");
+				FROM("biz_annotation");
+				if (null != id) {
+					WHERE("id_ = #{id}");
+				}
+			}
+		}.toString();
+	}
+	// 动态查询数据的拼接SQL方法
+	public String queryList(final Map<String, Object> param) {
+		return new SQL() {
+			{
+				SELECT("id_, name_, age_");
+				FROM("biz_annotation");
+				if (param != null && param.size() > 0) {
+					StringBuffer sb = new StringBuffer();
+					if (param.containsKey("name")) {
+						sb.append("AND name_ = " + param.get("name"));
+					}
+					if (param.containsKey("age")) {
+						sb.append("AND age_ = " + param.get("age"));
+					}
+					WHERE(sb.toString().replaceFirst("AND", ""));
+				}
+			}
+		}.toString();
+	}
+}
+```
+ProviderMain.java：
+```Java
+package com.mutistic.mybatis.java.provider;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import com.mutistic.mybatis.java.annotation.mode.BizAnnotation;
+import com.mutistic.mybatis.java.provider.mapper.ProviderMapper;
+import com.mutistic.mybatis.java.utils.SqlSeesionUtil;
+import com.mutistic.mybatis.utils.PrintUtil;
+// MyBatis使用@SelectProvider等注解实现CRUD
+public class ProviderMain {
+	public static void main(String[] args) {
+		ProviderMapper mapper = SqlSeesionUtil.getMapper(ProviderMapper.class);
+		PrintUtil.one("1、 MyBatis使用@SelectProvider等注解实现CRUD");
 
+		showByQueryById(mapper);
+		showByQueryList(mapper);
+		BizAnnotation entity = showByInsert(mapper);
+		showByUpdate(mapper, entity);
+		showByDelete(mapper);
+		SqlSeesionUtil.close();
+	}
+	private static void showByQueryById(ProviderMapper mapper) {
+		PrintUtil.one("2、使用@SeleteProvider注解实现数据查询：");
+		
+		BizAnnotation entity = mapper.queryById(1548226948040l);
+		PrintUtil.two("2.1、查询結果：", entity);
+	}
+	private static void showByQueryList(ProviderMapper mapper) {
+		PrintUtil.one("3、使用@SeleteProvider注解和<script>实现动态查询：");
+		
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("age", 18);
+		List<BizAnnotation> entityList = mapper.queryList(param);
+ 		PrintUtil.two("3.1、查询結果：", entityList);
+	}
+	private static BizAnnotation showByInsert(ProviderMapper mapper) {
+		PrintUtil.one("4、使用@InsertProvider注解实现数据新增：");
+		
+		BizAnnotation entity = new BizAnnotation();
+		entity.setId(System.currentTimeMillis());
+		entity.setName("test");
+		entity.setAge(18);
+		
+		Long result = mapper.insertEntity(entity);
+		PrintUtil.two("4.1、新增结果：", result);
+		SqlSeesionUtil.commit();
+		return entity;
+	}
+	private static void showByUpdate(ProviderMapper mapper, BizAnnotation entity) {
+		PrintUtil.one("5、使用@UpdateProvider注解实现数据修改：");
+		
+		entity.setName("张三");
+		Long result = mapper.updateEntity(entity);
+		PrintUtil.two("5.1、修改结果：", result);
+		SqlSeesionUtil.commit();
+	}
+	private static void showByDelete(ProviderMapper mapper) {
+		PrintUtil.one("6、使用@DeleteProvider注解实现数据删除：");
+		
+		Long result = mapper.deleteEntity(1548225597700l);
+		PrintUtil.two("6.1、删除结果：", result);
+		SqlSeesionUtil.commit();
+	}
+}
+```
 
 ---
 ### <a id="a_notes">[Notes](https://github.com/mutistic/mutistic.mybatis/blob/master/com.mutistic.mybatis/notes)</a> <a href="#top">last</a> <a href="#a_catalogue">next</a>
