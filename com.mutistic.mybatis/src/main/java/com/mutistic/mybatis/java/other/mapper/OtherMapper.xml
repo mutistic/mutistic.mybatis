@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper 
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mutistic.mybatis.java.other.mapper.OtherMapper">
+	<resultMap id="resultMap" type="BizTest">
+		<id column="id_" property="id" />
+		<result column="long_blob" property="longBlob" />
+		<result column="long_clob" property="longClob" />
+	</resultMap>
+	<!-- blob/clob数据类型的新增 -->
+	<insert id="insertEntity" parameterType="BizTest">
+		INSERT INTO biz_test (id_, long_blob, long_clob)
+		VALUES (#{id}, #{longBlob}, #{longClob})
+	</insert>
+	<!-- blob/clob数据类型的查询 -->
+	<select id="queryById" parameterType="Long" resultType="BizTest">
+		SELECT
+			id_, long_blob, long_clob
+		FROM biz_test
+		WHERE id_ = #{id}
+	</select>
+	<!-- 使用多个参数查询数据（不建议使用） -->
+	<select id="queryByParams" resultMap="resultMap">
+		SELECT
+			id_, long_blob, long_clob
+		FROM biz_test
+		WHERE id_ = #{param1} AND long_clob LIKE CONCAT('%' #{param2}, '%')
+	</select>
+</mapper>

@@ -19,6 +19,7 @@
 7. <a href="#a_one">MyBatis映射关系：一对一</a>
 8. <a href="#a_more">MyBatis映射关系：一对多</a>
 9. <a href="#a_dynamic">MyBatis动态SQL</a>
+10. <a href="#a_other">MyBatis处理Blob/Clob数据类型</a>
 98. <a href="#a_notes">Notes</a>
 99. <a href="#a_down">down</a>
 
@@ -1224,7 +1225,7 @@ OneToMoreMapper.xml：
 ```
 
 ---
-### <a id="a_dynamic">九、MyBatis动态SQL</a> <a href="#a_more">last</a> <a href="#">next</a>
+### <a id="a_dynamic">九、MyBatis动态SQL</a> <a href="#a_more">last</a> <a href="#a_other">next</a>
 DynamicMapper.java：
 ```Java
 package com.mutistic.mybatis.java.dynamic.mapper;
@@ -1367,6 +1368,132 @@ public class DynamicMain {
 		entity.setPassword(null);
 		Long result = mapper.updateBySet(entity);
 		PrintUtil.two("4.1、修改结果：", result);
+	}
+}
+```
+
+---
+### <a id="a_other">十、MyBatis处理Blob/Clob数据类型</a> <a href="#a_dynamic">last</a> <a href="#">next</a>
+BizTest.java：
+```Java
+package com.mutistic.mybatis.java.other;
+import java.util.Arrays;
+// Blob/Clob数据类型
+public class BizTest {
+	private Long id;
+	private byte[] longBlob;
+	private String longClob;
+	// ...
+}
+```
+OtherMapper.java：
+```Java
+package com.mutistic.mybatis.java.other.mapper;
+import java.util.List;
+import com.mutistic.mybatis.java.other.BizTest;
+// OtherMapper接口
+public interface OtherMapper {
+	// blob/clob数据类型的新增
+	Long insertEntity(BizTest entity);
+	// blob/clob数据类型的查询
+	BizTest queryById(Long id);
+	// 使用多个参数查询数据（不建议使用）
+	List<BizTest> queryByParams(Long id, String longClob);
+}
+```
+OtherMapper.xml：
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper 
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mutistic.mybatis.java.other.mapper.OtherMapper">
+	<resultMap id="resultMap" type="BizTest">
+		<id column="id_" property="id" />
+		<result column="long_blob" property="longBlob" />
+		<result column="long_clob" property="longClob" />
+	</resultMap>
+	<!-- blob/clob数据类型的新增 -->
+	<insert id="insertEntity" parameterType="BizTest">
+		INSERT INTO biz_test (id_, long_blob, long_clob)
+		VALUES (#{id}, #{longBlob}, #{longClob})
+	</insert>
+	<!-- blob/clob数据类型的查询 -->
+	<select id="queryById" parameterType="Long" resultType="BizTest">
+		SELECT
+			id_, long_blob, long_clob
+		FROM biz_test
+		WHERE id_ = #{id}
+	</select>
+	<!-- 使用多个参数查询数据（不建议使用） -->
+	<select id="queryByParams" resultMap="resultMap">
+		SELECT
+			id_, long_blob, long_clob
+		FROM biz_test
+		WHERE id_ = #{param1} AND long_clob LIKE CONCAT('%' #{param2}, '%')
+	</select>
+</mapper>
+```
+OtherMain.java：
+```Java
+package com.mutistic.mybatis.java.other;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.util.List;
+import com.mutistic.mybatis.java.other.mapper.OtherMapper;
+import com.mutistic.mybatis.java.utils.SqlSeesionUtil;
+import com.mutistic.mybatis.utils.PrintUtil;
+// MyBatis处理Blob/Clob数据类型
+public class OtherMain {
+	public static void main(String[] args) {
+		OtherMapper mapper = SqlSeesionUtil.getMapper(OtherMapper.class);
+		PrintUtil.one("1、 MyBatis处理Blob/Clob数据类型");
+
+		showByInsertEntity(mapper);
+		showByQueryById(mapper);
+		showByQueryParams(mapper);
+		SqlSeesionUtil.close();
+	}
+	private final static String PNG_URL = "src/main/java/com/mutistic/mybatis/java/other/";
+	private static void showByInsertEntity(OtherMapper mapper) {
+		PrintUtil.one("2、blob/clob数据类型的新增：");
+		BizTest entity = new BizTest();
+		entity.setId(System.currentTimeMillis());
+		try {
+			// InputStream inputStream = BizTest.class.getResourceAsStream("longBlob.png");
+			FileInputStream inputStream = new FileInputStream(new File(PNG_URL + "longBlob.png"));
+			byte[] longBlob = new byte[inputStream.available()];
+			inputStream.read(longBlob);
+			inputStream.close();
+			
+			entity.setLongBlob(longBlob);
+		} catch (Exception e) {
+			PrintUtil.err("读取文件出现异常，打印堆栈异常信息：" + e.getMessage());
+		}
+		entity.setLongClob("test long clob ");
+		Long result = mapper.insertEntity(entity);
+		SqlSeesionUtil.commit();
+		PrintUtil.two("2.1、新增结果：", result);
+	}
+	private static void showByQueryById(OtherMapper mapper) {
+		PrintUtil.one("3、blob/clob数据类型的查询：");
+
+		BizTest entity = mapper.queryById(1548210398664l);
+		PrintUtil.two("3.1、查询结果：", entity);
+
+		try {
+			FileOutputStream outputStream = new FileOutputStream(new File(PNG_URL + "longBlob2.png"));
+			outputStream.write(entity.getLongBlob());
+			outputStream.close();
+			PrintUtil.two("3.2、将读取到的文件成功写入到：", PNG_URL + "longBlob2.png");
+		} catch (Exception e) {
+			PrintUtil.err("写入文件出现异常，打印堆栈异常信息：" + e.getMessage());
+		}
+	}
+	private static void showByQueryParams(OtherMapper mapper) {
+		PrintUtil.one("4、使用多个参数查询数据（不建议使用）：");
+		List<BizTest> entityList = mapper.queryByParams(1548210398664l, "clob");
+		PrintUtil.two("4.1、查询结果：", entityList);
 	}
 }
 ```

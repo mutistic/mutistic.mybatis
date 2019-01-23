@@ -20,6 +20,7 @@
 		<typeAlias alias="BizAddress" type="com.mutistic.mybatis.java.model.BizAddress" />
 		<typeAlias alias="BizUser" type="com.mutistic.mybatis.java.model.BizUser" />
 		<!-- <package name="com.mutistic.mybatis"/> -->
+		<typeAlias alias="BizTest" type="com.mutistic.mybatis.java.other.BizTest"/>
 	</typeAliases>
 
 	<!-- environments：配置环境，MyBatis 可以配置成适应多种环境，这种机制有助于将 SQL 映射应用于多种数据库之中
@@ -48,5 +49,6 @@
 		<mapper resource="com/mutistic/mybatis/java/one/mapper/OneToOneMapper.xml" />
 		<mapper resource="com/mutistic/mybatis/java/more/mapper/OneToMoreMapper.xml" />
 		<mapper resource="com/mutistic/mybatis/java/dynamic/mapper/DynamicMapper.xml"/>
+		<mapper resource="com/mutistic/mybatis/java/other/mapper/OtherMapper.xml"/>
 	</mappers>
 </configuration>

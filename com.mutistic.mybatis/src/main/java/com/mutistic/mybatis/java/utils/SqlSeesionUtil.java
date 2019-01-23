@@ -1,5 +1,9 @@
 package com.mutistic.mybatis.java.utils;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
@@ -18,6 +22,9 @@ public class SqlSeesionUtil {
 
 	/** Mybatis Config 配置文件名称 */
 	private final static String MYBATIS_CONFIG_XML = "mybatis-config.xml";
+	/** Mybatis Config 配置文件相对路径 */
+	private final static String MYBATIS_CONFIG_XML_URL = "src/main/java/com/mutistic/mybatis/java/resources/"
+			+ MYBATIS_CONFIG_XML;
 	/** SqlSessionFactory工厂类 */
 	private static SqlSessionFactory sqlSessionFactory;
 	/** SqlSession数据库会话 */
@@ -32,11 +39,10 @@ public class SqlSeesionUtil {
 	public static SqlSessionFactory getSqlSessionFactory() {
 		try {
 			if (sqlSessionFactory == null) {
-				System.out.println(ResourcesTest.class.getResourceAsStream(MYBATIS_CONFIG_XML).getClass());
-				
-				sqlSessionFactory = new SqlSessionFactoryBuilder()
-						.build(ResourcesTest.class.getResourceAsStream(MYBATIS_CONFIG_XML));
-				
+				InputStream inputStream = ResourcesTest.class.getResourceAsStream(MYBATIS_CONFIG_XML);
+//				FileInputStream inputStream = new FileInputStream(new File(MYBATIS_CONFIG_XML_URL));
+				sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+
 				PrintUtil.one("0、创建SqlSessionFactory工厂类：");
 				PrintUtil.two("0.1、Mybatis Config 配置文件名称及路径", "xmlName=" + MYBATIS_CONFIG_XML + ", xmlURL="
 						+ ResourcesTest.class.getResource(MYBATIS_CONFIG_XML).getPath());
@@ -58,10 +64,10 @@ public class SqlSeesionUtil {
 		if (null == sqlSessionFactory) {
 			getSqlSessionFactory();
 		}
-		if(null == sqlSession) {
+		if (null == sqlSession) {
 			try {
 				sqlSession = sqlSessionFactory.openSession();
-				
+
 				PrintUtil.two("0.3、通过SqlSessionFactory.openSession()：创建数据库会话", "SqlSession=" + sqlSession);
 			} catch (Exception e) {
 				PrintUtil.err("0.3.e、创建数据库会话出现异常，打印堆栈信息：" + e.getMessage());
@@ -82,7 +88,7 @@ public class SqlSeesionUtil {
 		T mapper = null;
 		try {
 			mapper = openSession().getMapper(mapperClass);
-			
+
 			PrintUtil.two("0.4、通过SqlSession.getMapper(Class<T> type)：获取MapperClass实例对象", "MapperClass=" + mapper);
 		} catch (Exception e) {
 			PrintUtil.err("0.4.e、获取MapperClass实例对象出现异常，打印堆栈信息：" + e.getMessage());
@@ -91,13 +97,13 @@ public class SqlSeesionUtil {
 	}
 
 	/**
-	 * @description 提交SqlSeession 
+	 * @description 提交SqlSeession
 	 * @author mutisitic
 	 * @date 2019年1月17日
 	 */
 	public static void commit() {
 		try {
-			if(null != sqlSession) {
+			if (null != sqlSession) {
 				PrintUtil.two("0.5、提交SqlSeession", null);
 				sqlSession.commit();
 			}
@@ -105,15 +111,15 @@ public class SqlSeesionUtil {
 			PrintUtil.err("0.5.e、提交SqlSeession出现异常，打印堆栈信息：" + e.getMessage());
 		}
 	}
-	
+
 	/**
-	 * @description 关闭SqlSeession 
+	 * @description 关闭SqlSeession
 	 * @author mutisitic
 	 * @date 2019年1月17日
 	 */
 	public static void close() {
 		try {
-			if(null != sqlSession) {
+			if (null != sqlSession) {
 				PrintUtil.one("0.6、关闭SqlSeession");
 				sqlSession.close();
 			}
@@ -121,7 +127,7 @@ public class SqlSeesionUtil {
 			PrintUtil.err("0.6.e、关闭SqlSeession出现异常，打印堆栈信息：" + e.getMessage());
 		}
 	}
-	
+
 	public static void main(String[] args) {
 		getMapper(SelectMapper.class);
 	}
