@@ -8,8 +8,11 @@ import java.util.Arrays;
  * @date 2019年1月23日
  */
 public class BizTest {
+	/** ID */
 	private Long id;
+	/** byte[] 对应Mysql数据库 longblob */
 	private byte[] longBlob;
+	/** String 对应Mysql数据库 longclob */
 	private String longClob;
 
 	public Long getId() {

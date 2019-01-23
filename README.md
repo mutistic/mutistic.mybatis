@@ -1380,8 +1380,11 @@ package com.mutistic.mybatis.java.other;
 import java.util.Arrays;
 // Blob/Clob数据类型
 public class BizTest {
+	/** ID */
 	private Long id;
+	/** byte[] 对应Mysql数据库 longblob */
 	private byte[] longBlob;
+	/** String 对应Mysql数据库 longclob */
 	private String longClob;
 	// ...
 }
