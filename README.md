@@ -935,7 +935,7 @@ package com.mutistic.mybatis.java.model;
 // 用户
 ppressWarnings("serial")
 public class BizUser extends BaseModel {
-	/** 用户名 */
+  /** 用户名 */
     private String name;
     /** 账号 */
     private String account;
@@ -952,8 +952,8 @@ package com.mutistic.mybatis.java.bizuser.mapper;
 import com.mutistic.mybatis.java.model.BizUser;
 // BizUserMapper 接口
 public interface BizUserMapper {
-	// 根据ID查询数据 
-	BizUser queryById(Long id);
+  // 根据ID查询数据 
+  BizUser queryById(Long id);
 }
 ```
 BizUserMapper.xml：
@@ -962,28 +962,28 @@ BizUserMapper.xml：
 <!DOCTYPE mapper 
  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mutistic.mybatis.java.bizuser.mapper.BizUserMapper">
-	<resultMap id="BizUserMap" type="BizUser">
-		<id column="id_" property="id" />
-		<result column="name_" property="name" />
-		<result column="account_" property="account" />
-		<result column="password_" property="password" />
-		<result column="mobile_" property="mobile" />
-		<result column="create_by" property="createBy" />
-		<result column="create_time" property="createTime" />
-		<result column="update_by" property="updateBy" />
-		<result column="update_time" property="updateTime" />
-		<result column="remark_" property="remark" />
-		<result column="enable_" property="enable" />
-		<result column="version_no" property="versionNo" />
-	</resultMap>
-	<select id="queryById" parameterType="java.lang.Long" resultMap="BizUserMap">
-		SELECT 
-			id_, name_, account_, password_, mobile_,
-			create_by, create_time, update_by, update_time,
-			remark_, enable_, version_no
-		FROM biz_user
-		WHERE id_ = #{id}
-	</select>
+  <resultMap id="BizUserMap" type="BizUser">
+    <id column="id_" property="id" />
+    <result column="name_" property="name" />
+    <result column="account_" property="account" />
+    <result column="password_" property="password" />
+    <result column="mobile_" property="mobile" />
+    <result column="create_by" property="createBy" />
+    <result column="create_time" property="createTime" />
+    <result column="update_by" property="updateBy" />
+    <result column="update_time" property="updateTime" />
+    <result column="remark_" property="remark" />
+    <result column="enable_" property="enable" />
+    <result column="version_no" property="versionNo" />
+  </resultMap>
+  <select id="queryById" parameterType="java.lang.Long" resultMap="BizUserMap">
+    SELECT 
+      id_, name_, account_, password_, mobile_,
+      create_by, create_time, update_by, update_time,
+      remark_, enable_, version_no
+    FROM biz_user
+    WHERE id_ = #{id}
+  </select>
 </mapper>
 ```
 OneToOneDto.java：
@@ -1236,12 +1236,12 @@ import java.util.Map;
 import com.mutistic.mybatis.java.model.BizUser;
 // DynamicMapper 接口
 public interface DynamicMapper {
-	// 动态SQL：WHERE、IF、choose、foreach
-	List<BizUser> queryByDynamic(Map<String, Object> param);
-	// 动态SQL：Trim
-	List<BizUser> queryByTrim(Map<String, Object> param);
-	// 动态SQL：Set
-	Long updateBySet(BizUser entity);
+  // 动态SQL：WHERE、IF、choose、foreach
+  List<BizUser> queryByDynamic(Map<String, Object> param);
+  // 动态SQL：Trim
+  List<BizUser> queryByTrim(Map<String, Object> param);
+  // 动态SQL：Set
+  Long updateBySet(BizUser entity);
 }
 ```
 DynamicMapper.xml：
@@ -1250,80 +1250,80 @@ DynamicMapper.xml：
 <!DOCTYPE mapper 
  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper
-	namespace="com.mutistic.mybatis.java.dynamic.mapper.DynamicMapper">
-	<resultMap id="resultMap" type="BizUser">
-		<id column="id_" property="id" />
-		<result column="name_" property="name" />
-		<result column="account_" property="account" />
-		<result column="password_" property="password" />
-		<result column="mobile_" property="mobile" />
-		<result column="create_by" property="createBy" />
-		<result column="create_time" property="createTime" />
-		<result column="update_by" property="updateBy" />
-		<result column="update_time" property="updateTime" />
-		<result column="remark_" property="remark" />
-		<result column="enable_" property="enable" />
-		<result column="version_no" property="versionNo" />
-	</resultMap>
-	<sql id="column">
-		id_, name_, account_, password_, mobile_, status_,
-		create_by, create_time, update_by, update_time,
-		remark_,enable_,version_no
-	</sql>
-	<!-- 动态SQL：WHERE、IF、choose、foreach -->
-	<select id="queryByDynamic" parameterType="java.util.Map"
-		resultMap="resultMap">
-		SELECT
-		<include refid="column" />
-		FROM biz_user
-		<where>
-			<if test="id != null"> AND id_ = #{id} </if>
-			<if test="name != null and name != ''"> AND name_ = #{name} </if>
-			<choose>
-				<when test="statusType=1"> AND status_ IN (0, 1,2)</when>
-				<when test="statusType=2"> AND status_ IN (0,1)</when>
-				<otherwise>AND status_ IN (1,2) </otherwise>
-			</choose>
-			<if test="statusList != null">
-				AND status_ IN
-				<foreach collection="statusList" item="key" separator=","
-					open="(" close=")">
-					${key}
-				</foreach>
-			</if>
-		</where>
-	</select>
-	<!-- 动态SQL：Trim -->
-	<select id="queryByTrim" parameterType="java.util.Map"
-		resultMap="resultMap">
-		SELECT
-		<include refid="column" />
-		FROM biz_user
-		<trim prefix="WHERE" prefixOverrides="AND">
-			<if test="id != null"> AND id_ = #{id} </if>
-			<if test="name != null and name != ''"> AND name_ = #{name} </if>
-		</trim>
-	</select>
-	<!-- 动态SQL：Set -->
-	<update id="updateBySet" parameterType="BizUser">
-		UPDATE biz_user
-		<!-- <trim prefix="SET" suffixOverrides=","></trim> -->
-		<set>
-			<if test="name != null"> name_ = #{name}, </if>
-			<if test="account != null"> account_ = #{account}, </if>
-			<if test="password != null"> password_ = #{password}, </if>
-			<if test="mobile != null"> mobile_ = #{mobile}, </if>
-			<if test="status != null"> status_ = #{status}, </if>
-			<if test="createBy != null"> create_by = #{createBy}, </if>
-			<if test="createTime != null"> create_time = #{createTime}, </if>
-			<if test="updateBy != null"> update_by = #{updateBy}, </if>
-			<if test="updateTime != null"> update_time = #{updateTime}, </if>
-			<if test="remark != null"> remark_ = #{remark}, </if>
-			<if test="enable != null"> enable_ = #{enable}, </if>
-			<if test="versionNo != null"> version_no = #{versionNo}, </if>
-		</set>
-		WHERE id_ = #{id}
-	</update>
+  namespace="com.mutistic.mybatis.java.dynamic.mapper.DynamicMapper">
+  <resultMap id="resultMap" type="BizUser">
+    <id column="id_" property="id" />
+    <result column="name_" property="name" />
+    <result column="account_" property="account" />
+    <result column="password_" property="password" />
+    <result column="mobile_" property="mobile" />
+    <result column="create_by" property="createBy" />
+    <result column="create_time" property="createTime" />
+    <result column="update_by" property="updateBy" />
+    <result column="update_time" property="updateTime" />
+    <result column="remark_" property="remark" />
+    <result column="enable_" property="enable" />
+    <result column="version_no" property="versionNo" />
+  </resultMap>
+  <sql id="column">
+    id_, name_, account_, password_, mobile_, status_,
+    create_by, create_time, update_by, update_time,
+    remark_,enable_,version_no
+  </sql>
+  <!-- 动态SQL：WHERE、IF、choose、foreach -->
+  <select id="queryByDynamic" parameterType="java.util.Map"
+    resultMap="resultMap">
+    SELECT
+    <include refid="column" />
+    FROM biz_user
+    <where>
+      <if test="id != null"> AND id_ = #{id} </if>
+      <if test="name != null and name != ''"> AND name_ = #{name} </if>
+      <choose>
+        <when test="statusType=1"> AND status_ IN (0, 1,2)</when>
+        <when test="statusType=2"> AND status_ IN (0,1)</when>
+        <otherwise>AND status_ IN (1,2) </otherwise>
+      </choose>
+      <if test="statusList != null">
+        AND status_ IN
+        <foreach collection="statusList" item="key" separator=","
+          open="(" close=")">
+          ${key}
+        </foreach>
+      </if>
+    </where>
+  </select>
+  <!-- 动态SQL：Trim -->
+  <select id="queryByTrim" parameterType="java.util.Map"
+    resultMap="resultMap">
+    SELECT
+    <include refid="column" />
+    FROM biz_user
+    <trim prefix="WHERE" prefixOverrides="AND">
+      <if test="id != null"> AND id_ = #{id} </if>
+      <if test="name != null and name != ''"> AND name_ = #{name} </if>
+    </trim>
+  </select>
+  <!-- 动态SQL：Set -->
+  <update id="updateBySet" parameterType="BizUser">
+    UPDATE biz_user
+    <!-- <trim prefix="SET" suffixOverrides=","></trim> -->
+    <set>
+      <if test="name != null"> name_ = #{name}, </if>
+      <if test="account != null"> account_ = #{account}, </if>
+      <if test="password != null"> password_ = #{password}, </if>
+      <if test="mobile != null"> mobile_ = #{mobile}, </if>
+      <if test="status != null"> status_ = #{status}, </if>
+      <if test="createBy != null"> create_by = #{createBy}, </if>
+      <if test="createTime != null"> create_time = #{createTime}, </if>
+      <if test="updateBy != null"> update_by = #{updateBy}, </if>
+      <if test="updateTime != null"> update_time = #{updateTime}, </if>
+      <if test="remark != null"> remark_ = #{remark}, </if>
+      <if test="enable != null"> enable_ = #{enable}, </if>
+      <if test="versionNo != null"> version_no = #{versionNo}, </if>
+    </set>
+    WHERE id_ = #{id}
+  </update>
 </mapper>
 ```
 DynamicMain.java：
@@ -1338,39 +1338,39 @@ import com.mutistic.mybatis.java.utils.SqlSeesionUtil;
 import com.mutistic.mybatis.utils.PrintUtil;
 // MyBatis动态SQL
 public class DynamicMain {
-	public static void main(String[] args) {
-		DynamicMapper mapper = SqlSeesionUtil.getMapper(DynamicMapper.class);
-		PrintUtil.one("1、 MyBatis动态SQL");
+  public static void main(String[] args) {
+    DynamicMapper mapper = SqlSeesionUtil.getMapper(DynamicMapper.class);
+    PrintUtil.one("1、 MyBatis动态SQL");
 
-		showByQueryByDynamic(mapper);
-		BizUser user = showByQueryByTrim(mapper);
-		showByUpdateBySet(mapper, user);
-		SqlSeesionUtil.close();
-	}
-	private static void showByQueryByDynamic(DynamicMapper mapper) {
-		PrintUtil.one("2、动态SQL：WHERE、IF、choose、foreach");
-		Map<String, Object> param = new HashMap<String, Object>();
-		param.put("statusList", new Integer[] {0,1,2});
-		param.put("statusType", 1);
-		List<BizUser> userList = mapper.queryByDynamic(param);
-		PrintUtil.two("2.1、查询结果：", userList);
-	}
-	private static BizUser showByQueryByTrim(DynamicMapper mapper) {
-		PrintUtil.one("3、动态SQL：Trim");
-		Map<String, Object> param = new HashMap<String, Object>();
-		param.put("id", 111111l);
-		List<BizUser> userList = mapper.queryByTrim(param);
-		PrintUtil.two("3.1、查询结果：", userList);
-		return userList.get(0);
-	}
-	private static void showByUpdateBySet(DynamicMapper mapper, BizUser entity) {
-		PrintUtil.one("4、动态SQL：Set");
-		
-		entity.setRemark("");
-		entity.setPassword(null);
-		Long result = mapper.updateBySet(entity);
-		PrintUtil.two("4.1、修改结果：", result);
-	}
+    showByQueryByDynamic(mapper);
+    BizUser user = showByQueryByTrim(mapper);
+    showByUpdateBySet(mapper, user);
+    SqlSeesionUtil.close();
+  }
+  private static void showByQueryByDynamic(DynamicMapper mapper) {
+    PrintUtil.one("2、动态SQL：WHERE、IF、choose、foreach");
+    Map<String, Object> param = new HashMap<String, Object>();
+    param.put("statusList", new Integer[] {0,1,2});
+    param.put("statusType", 1);
+    List<BizUser> userList = mapper.queryByDynamic(param);
+    PrintUtil.two("2.1、查询结果：", userList);
+  }
+  private static BizUser showByQueryByTrim(DynamicMapper mapper) {
+    PrintUtil.one("3、动态SQL：Trim");
+    Map<String, Object> param = new HashMap<String, Object>();
+    param.put("id", 111111l);
+    List<BizUser> userList = mapper.queryByTrim(param);
+    PrintUtil.two("3.1、查询结果：", userList);
+    return userList.get(0);
+  }
+  private static void showByUpdateBySet(DynamicMapper mapper, BizUser entity) {
+    PrintUtil.one("4、动态SQL：Set");
+    
+    entity.setRemark("");
+    entity.setPassword(null);
+    Long result = mapper.updateBySet(entity);
+    PrintUtil.two("4.1、修改结果：", result);
+  }
 }
 ```
 
@@ -1382,13 +1382,13 @@ package com.mutistic.mybatis.java.other;
 import java.util.Arrays;
 // Blob/Clob数据类型
 public class BizTest {
-	/** ID */
-	private Long id;
-	/** byte[] 对应Mysql数据库 longblob */
-	private byte[] longBlob;
-	/** String 对应Mysql数据库 longclob */
-	private String longClob;
-	// get/set
+  /** ID */
+  private Long id;
+  /** byte[] 对应Mysql数据库 longblob */
+  private byte[] longBlob;
+  /** String 对应Mysql数据库 longclob */
+  private String longClob;
+  // get/set
 }
 ```
 OtherMapper.java：
@@ -1398,12 +1398,12 @@ import java.util.List;
 import com.mutistic.mybatis.java.other.BizTest;
 // OtherMapper接口
 public interface OtherMapper {
-	// blob/clob数据类型的新增
-	Long insertEntity(BizTest entity);
-	// blob/clob数据类型的查询
-	BizTest queryById(Long id);
-	// 使用多个参数查询数据（不建议使用）
-	List<BizTest> queryByParams(Long id, String longClob);
+  // blob/clob数据类型的新增
+  Long insertEntity(BizTest entity);
+  // blob/clob数据类型的查询
+  BizTest queryById(Long id);
+  // 使用多个参数查询数据（不建议使用）
+  List<BizTest> queryByParams(Long id, String longClob);
 }
 ```
 OtherMapper.xml：
@@ -1412,30 +1412,30 @@ OtherMapper.xml：
 <!DOCTYPE mapper 
  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mutistic.mybatis.java.other.mapper.OtherMapper">
-	<resultMap id="resultMap" type="BizTest">
-		<id column="id_" property="id" />
-		<result column="long_blob" property="longBlob" />
-		<result column="long_clob" property="longClob" />
-	</resultMap>
-	<!-- blob/clob数据类型的新增 -->
-	<insert id="insertEntity" parameterType="BizTest">
-		INSERT INTO biz_test (id_, long_blob, long_clob)
-		VALUES (#{id}, #{longBlob}, #{longClob})
-	</insert>
-	<!-- blob/clob数据类型的查询 -->
-	<select id="queryById" parameterType="Long" resultType="BizTest">
-		SELECT
-			id_, long_blob, long_clob
-		FROM biz_test
-		WHERE id_ = #{id}
-	</select>
-	<!-- 使用多个参数查询数据（不建议使用） -->
-	<select id="queryByParams" resultMap="resultMap">
-		SELECT
-			id_, long_blob, long_clob
-		FROM biz_test
-		WHERE id_ = #{param1} AND long_clob LIKE CONCAT('%' #{param2}, '%')
-	</select>
+  <resultMap id="resultMap" type="BizTest">
+    <id column="id_" property="id" />
+    <result column="long_blob" property="longBlob" />
+    <result column="long_clob" property="longClob" />
+  </resultMap>
+  <!-- blob/clob数据类型的新增 -->
+  <insert id="insertEntity" parameterType="BizTest">
+    INSERT INTO biz_test (id_, long_blob, long_clob)
+    VALUES (#{id}, #{longBlob}, #{longClob})
+  </insert>
+  <!-- blob/clob数据类型的查询 -->
+  <select id="queryById" parameterType="Long" resultType="BizTest">
+    SELECT
+      id_, long_blob, long_clob
+    FROM biz_test
+    WHERE id_ = #{id}
+  </select>
+  <!-- 使用多个参数查询数据（不建议使用） -->
+  <select id="queryByParams" resultMap="resultMap">
+    SELECT
+      id_, long_blob, long_clob
+    FROM biz_test
+    WHERE id_ = #{param1} AND long_clob LIKE CONCAT('%' #{param2}, '%')
+  </select>
 </mapper>
 ```
 OtherMain.java：
@@ -1450,56 +1450,56 @@ import com.mutistic.mybatis.java.utils.SqlSeesionUtil;
 import com.mutistic.mybatis.utils.PrintUtil;
 // MyBatis处理Blob/Clob数据类型
 public class OtherMain {
-	public static void main(String[] args) {
-		OtherMapper mapper = SqlSeesionUtil.getMapper(OtherMapper.class);
-		PrintUtil.one("1、 MyBatis处理Blob/Clob数据类型");
+  public static void main(String[] args) {
+    OtherMapper mapper = SqlSeesionUtil.getMapper(OtherMapper.class);
+    PrintUtil.one("1、 MyBatis处理Blob/Clob数据类型");
 
-		showByInsertEntity(mapper);
-		showByQueryById(mapper);
-		showByQueryParams(mapper);
-		SqlSeesionUtil.close();
-	}
-	private final static String PNG_URL = "src/main/java/com/mutistic/mybatis/java/other/";
-	private static void showByInsertEntity(OtherMapper mapper) {
-		PrintUtil.one("2、blob/clob数据类型的新增：");
-		BizTest entity = new BizTest();
-		entity.setId(System.currentTimeMillis());
-		try {
-			// InputStream inputStream = BizTest.class.getResourceAsStream("longBlob.png");
-			FileInputStream inputStream = new FileInputStream(new File(PNG_URL + "longBlob.png"));
-			byte[] longBlob = new byte[inputStream.available()];
-			inputStream.read(longBlob);
-			inputStream.close();
-			
-			entity.setLongBlob(longBlob);
-		} catch (Exception e) {
-			PrintUtil.err("读取文件出现异常，打印堆栈异常信息：" + e.getMessage());
-		}
-		entity.setLongClob("test long clob ");
-		Long result = mapper.insertEntity(entity);
-		SqlSeesionUtil.commit();
-		PrintUtil.two("2.1、新增结果：", result);
-	}
-	private static void showByQueryById(OtherMapper mapper) {
-		PrintUtil.one("3、blob/clob数据类型的查询：");
+    showByInsertEntity(mapper);
+    showByQueryById(mapper);
+    showByQueryParams(mapper);
+    SqlSeesionUtil.close();
+  }
+  private final static String PNG_URL = "src/main/java/com/mutistic/mybatis/java/other/";
+  private static void showByInsertEntity(OtherMapper mapper) {
+    PrintUtil.one("2、blob/clob数据类型的新增：");
+    BizTest entity = new BizTest();
+    entity.setId(System.currentTimeMillis());
+    try {
+      // InputStream inputStream = BizTest.class.getResourceAsStream("longBlob.png");
+      FileInputStream inputStream = new FileInputStream(new File(PNG_URL + "longBlob.png"));
+      byte[] longBlob = new byte[inputStream.available()];
+      inputStream.read(longBlob);
+      inputStream.close();
+      
+      entity.setLongBlob(longBlob);
+    } catch (Exception e) {
+      PrintUtil.err("读取文件出现异常，打印堆栈异常信息：" + e.getMessage());
+    }
+    entity.setLongClob("test long clob ");
+    Long result = mapper.insertEntity(entity);
+    SqlSeesionUtil.commit();
+    PrintUtil.two("2.1、新增结果：", result);
+  }
+  private static void showByQueryById(OtherMapper mapper) {
+    PrintUtil.one("3、blob/clob数据类型的查询：");
 
-		BizTest entity = mapper.queryById(1548210398664l);
-		PrintUtil.two("3.1、查询结果：", entity);
+    BizTest entity = mapper.queryById(1548210398664l);
+    PrintUtil.two("3.1、查询结果：", entity);
 
-		try {
-			FileOutputStream outputStream = new FileOutputStream(new File(PNG_URL + "longBlob2.png"));
-			outputStream.write(entity.getLongBlob());
-			outputStream.close();
-			PrintUtil.two("3.2、将读取到的文件成功写入到：", PNG_URL + "longBlob2.png");
-		} catch (Exception e) {
-			PrintUtil.err("写入文件出现异常，打印堆栈异常信息：" + e.getMessage());
-		}
-	}
-	private static void showByQueryParams(OtherMapper mapper) {
-		PrintUtil.one("4、使用多个参数查询数据（不建议使用）：");
-		List<BizTest> entityList = mapper.queryByParams(1548210398664l, "clob");
-		PrintUtil.two("4.1、查询结果：", entityList);
-	}
+    try {
+      FileOutputStream outputStream = new FileOutputStream(new File(PNG_URL + "longBlob2.png"));
+      outputStream.write(entity.getLongBlob());
+      outputStream.close();
+      PrintUtil.two("3.2、将读取到的文件成功写入到：", PNG_URL + "longBlob2.png");
+    } catch (Exception e) {
+      PrintUtil.err("写入文件出现异常，打印堆栈异常信息：" + e.getMessage());
+    }
+  }
+  private static void showByQueryParams(OtherMapper mapper) {
+    PrintUtil.one("4、使用多个参数查询数据（不建议使用）：");
+    List<BizTest> entityList = mapper.queryByParams(1548210398664l, "clob");
+    PrintUtil.two("4.1、查询结果：", entityList);
+  }
 }
 ```
 
@@ -1514,10 +1514,10 @@ import org.apache.ibatis.session.RowBounds;
 import com.mutistic.mybatis.java.model.BizAddress;
 // PaginationMapper接口
 public interface PaginationMapper {
-	// 逻辑分页（通过RowBounds查询到所有的数据后在内存中分页，不建议使用）
-	List<BizAddress> queryByLogicPaging(RowBounds bounds);
-	// MySql分页查询 
-	List<BizAddress> queryByPhysicsPaging(Map<String, Object> param);
+  // 逻辑分页（通过RowBounds查询到所有的数据后在内存中分页，不建议使用）
+  List<BizAddress> queryByLogicPaging(RowBounds bounds);
+  // MySql分页查询 
+  List<BizAddress> queryByPhysicsPaging(Map<String, Object> param);
 }
 ```
 PaginationMapper.xml：
@@ -1526,26 +1526,26 @@ PaginationMapper.xml：
 <!DOCTYPE mapper 
  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mutistic.mybatis.java.pagination.mapper.PaginationMapper">
-	<!-- 逻辑分页（通过RowBounds查询到所有的数据后在内存中分页，不建议使用） -->
-	<select id="queryByLogicPaging" resultMap="com.mutistic.mybatis.java.select.mapper.SelectMapper.resultMap">
-		SELECT
-		<include refid="com.mutistic.mybatis.java.select.mapper.SelectMapper.entityColumn" />
-		FROM biz_address
-	</select>
-	<!-- MySql分页查询  -->
-	<select id="queryByDBPaging" parameterType="Map"
-		resultMap="com.mutistic.mybatis.java.select.mapper.SelectMapper.resultMap">
-		SELECT
-		<include refid="com.mutistic.mybatis.java.select.mapper.SelectMapper.entityColumn" />
-		FROM biz_address
-		<where>
-			<if test="consigneeNameLike != null and consigneeNameLike != ''">
-				AND consignee_name LIKE CONCAT('%', #{consigneeNameLike}, '%')
-			</if>
-		</where>
-		<if test="limit != null"> LIMIT ${limit} </if>
-		<if test="offset != null"> OFFSET ${offset} </if>
-	</select>
+  <!-- 逻辑分页（通过RowBounds查询到所有的数据后在内存中分页，不建议使用） -->
+  <select id="queryByLogicPaging" resultMap="com.mutistic.mybatis.java.select.mapper.SelectMapper.resultMap">
+    SELECT
+    <include refid="com.mutistic.mybatis.java.select.mapper.SelectMapper.entityColumn" />
+    FROM biz_address
+  </select>
+  <!-- MySql分页查询  -->
+  <select id="queryByDBPaging" parameterType="Map"
+    resultMap="com.mutistic.mybatis.java.select.mapper.SelectMapper.resultMap">
+    SELECT
+    <include refid="com.mutistic.mybatis.java.select.mapper.SelectMapper.entityColumn" />
+    FROM biz_address
+    <where>
+      <if test="consigneeNameLike != null and consigneeNameLike != ''">
+        AND consignee_name LIKE CONCAT('%', #{consigneeNameLike}, '%')
+      </if>
+    </where>
+    <if test="limit != null"> LIMIT ${limit} </if>
+    <if test="offset != null"> OFFSET ${offset} </if>
+  </select>
 </mapper>
 ```
 PaginationMain.java：
@@ -1561,44 +1561,44 @@ import com.mutistic.mybatis.java.utils.SqlSeesionUtil;
 import com.mutistic.mybatis.utils.PrintUtil;
 // MyBatis分页查询
 public class PaginationMain {
-	public static void main(String[] args) {
-		PaginationMapper mapper = SqlSeesionUtil.getMapper(PaginationMapper.class);
-		PrintUtil.one("1、 MyBatis分页查询");
+  public static void main(String[] args) {
+    PaginationMapper mapper = SqlSeesionUtil.getMapper(PaginationMapper.class);
+    PrintUtil.one("1、 MyBatis分页查询");
 
-		showByQueryByLogicPaging(mapper);
-		shwoByQueryByDBPaging(mapper);
-		shwoByQueryByJavaPaging(mapper);
-		SqlSeesionUtil.close();
-	}
-	private static void showByQueryByLogicPaging(PaginationMapper mapper) {
-		PrintUtil.one("2、 逻辑分页查询（通过RowBounds查询到所有的数据后在内存中分页，不建议使用）");
-		RowBounds rowBounds = new RowBounds(0, 3);
-		List<BizAddress> entityList = mapper.queryByLogicPaging(rowBounds);
-		PrintUtil.two("2.1、查询结果", "entitySize=" + entityList.size() + ", entityList=" + entityList);
-	}
-	private static void shwoByQueryByDBPaging(PaginationMapper mapper) {
-		PrintUtil.one("3、 Mysql物理分页查询");
-		Map<String, Object> param = new HashMap<String, Object>();
-		param.put("consigneeNameLike", "test");
-		param.put("limit", 3); // 每页内容数(可理解为： pageSize)
-		param.put("offset", 0); // 当前页数 (可理解未：pageIndex)
-		List<BizAddress> entityList = mapper.queryByDBPaging(param);
-		PrintUtil.two("3.1、查询结果", "entitySize=" + entityList.size() + ", entityList=" + entityList);
-	}
-	private static void shwoByQueryByJavaPaging(PaginationMapper mapper) {
-		PrintUtil.one("4、 Java内存假分页");
-		Map<String, Object> param = new HashMap<String, Object>();
-		param.put("consigneeNameLike", "test");
-		List<BizAddress> entityList = mapper.queryByDBPaging(param);
-		PrintUtil.two("4.1、查询结果", "entitySize=" + entityList.size() + ", entityList=" + entityList);
+    showByQueryByLogicPaging(mapper);
+    shwoByQueryByDBPaging(mapper);
+    shwoByQueryByJavaPaging(mapper);
+    SqlSeesionUtil.close();
+  }
+  private static void showByQueryByLogicPaging(PaginationMapper mapper) {
+    PrintUtil.one("2、 逻辑分页查询（通过RowBounds查询到所有的数据后在内存中分页，不建议使用）");
+    RowBounds rowBounds = new RowBounds(0, 3);
+    List<BizAddress> entityList = mapper.queryByLogicPaging(rowBounds);
+    PrintUtil.two("2.1、查询结果", "entitySize=" + entityList.size() + ", entityList=" + entityList);
+  }
+  private static void shwoByQueryByDBPaging(PaginationMapper mapper) {
+    PrintUtil.one("3、 Mysql物理分页查询");
+    Map<String, Object> param = new HashMap<String, Object>();
+    param.put("consigneeNameLike", "test");
+    param.put("limit", 3); // 每页内容数(可理解为： pageSize)
+    param.put("offset", 0); // 当前页数 (可理解未：pageIndex)
+    List<BizAddress> entityList = mapper.queryByDBPaging(param);
+    PrintUtil.two("3.1、查询结果", "entitySize=" + entityList.size() + ", entityList=" + entityList);
+  }
+  private static void shwoByQueryByJavaPaging(PaginationMapper mapper) {
+    PrintUtil.one("4、 Java内存假分页");
+    Map<String, Object> param = new HashMap<String, Object>();
+    param.put("consigneeNameLike", "test");
+    List<BizAddress> entityList = mapper.queryByDBPaging(param);
+    PrintUtil.two("4.1、查询结果", "entitySize=" + entityList.size() + ", entityList=" + entityList);
 
-		int limit = 3;
-		int offset = 1;
-		int toIndex = limit * (offset + 1); // 预估要截取的集合的toIndex
-		List<BizAddress> pageList = entityList.subList(limit * offset,
-				entityList.size() > toIndex ? toIndex : entityList.size());
-		PrintUtil.two("4.2、 Java内存假分页结果", "pageSize=" + pageList.size() + ", pageList=" + entityList);
-	}
+    int limit = 3;
+    int offset = 1;
+    int toIndex = limit * (offset + 1); // 预估要截取的集合的toIndex
+    List<BizAddress> pageList = entityList.subList(limit * offset,
+        entityList.size() > toIndex ? toIndex : entityList.size());
+    PrintUtil.two("4.2、 Java内存假分页结果", "pageSize=" + pageList.size() + ", pageList=" + entityList);
+  }
 }
 ```
 
@@ -1609,11 +1609,11 @@ BizAnnotation.java：
 ```Java
 package com.mutistic.mybatis.java.annotation.mode;
 public class BizAnnotation {
-	private Long id;
-	private String name;
-	private Integer age;
-	private List<BizMore> bizMoreList;
-	// get/set
+  private Long id;
+  private String name;
+  private Integer age;
+  private List<BizMore> bizMoreList;
+  // get/set
 }
 ```
 AnnotationMapper.java：
@@ -1631,40 +1631,40 @@ import org.apache.ibatis.annotations.Update;
 import com.mutistic.mybatis.java.annotation.mode.BizAnnotation;
 // AnnotationMapper接口
 public interface AnnotationMapper {
-	// 使用@Insert注解实现数据新增
-	@Insert("INSERT INTO biz_annotation(id_, name_, age_) VALUES(#{id}, #{name}, #{age})")
-	Long insertEntity(BizAnnotation entity);
-	// 使用@Update注解实现数据修改
-	@Update("UPDATE biz_annotation SET name_ = #{name}, age_ = #{age} WHERE id_ = #{id}")
-	Long updateEntity(BizAnnotation entity);
-	// 使用@Delete注解实现数据删除
-	@Delete("DELETE FROM biz_annotation WHERE id_ = #{id}")
-	Long deleteEntity(Long id);
+  // 使用@Insert注解实现数据新增
+  @Insert("INSERT INTO biz_annotation(id_, name_, age_) VALUES(#{id}, #{name}, #{age})")
+  Long insertEntity(BizAnnotation entity);
+  // 使用@Update注解实现数据修改
+  @Update("UPDATE biz_annotation SET name_ = #{name}, age_ = #{age} WHERE id_ = #{id}")
+  Long updateEntity(BizAnnotation entity);
+  // 使用@Delete注解实现数据删除
+  @Delete("DELETE FROM biz_annotation WHERE id_ = #{id}")
+  Long deleteEntity(Long id);
 
-	// 使用@Selete注解实现数据查询
-	@Select("SELECT id_, name_, age_ FROM biz_annotation WHERE id_ = #{id}")
-	// 使用@Results映射查询结果
-	@Results(id = "BizAnnotationResult", value={
-		@Result(id=true, column="id_", property="id"),
-		@Result(column="name_", property="name"),
-		@Result(column="age_", property="age")
-	})
-	BizAnnotation queryById(Long id);
+  // 使用@Selete注解实现数据查询
+  @Select("SELECT id_, name_, age_ FROM biz_annotation WHERE id_ = #{id}")
+  // 使用@Results映射查询结果
+  @Results(id = "BizAnnotationResult", value={
+    @Result(id=true, column="id_", property="id"),
+    @Result(column="name_", property="name"),
+    @Result(column="age_", property="age")
+  })
+  BizAnnotation queryById(Long id);
 
-	// 使用@Selete注解和<script>实现动态查询
-	@Select({ 
-		"<script>",  // 使用<script>实现动态SQL
-		"SELECT id_, name_, age_ FROM biz_annotation", 
-		"<where>",
-		"<if test=\"id!=null\">AND id_= #{id}</if>",
-		"<if test=\"name!=null and name != ''\">AND name_ = #{name}</if>",
-		"<if test=\"age!=null\">AND age_ = #{age}</if>",
-		"</where>",
-		"</script>" 
-		})
-	// 使用@ResultMap 绑定声明的@Results，实现复用
-	@ResultMap("BizAnnotationResult")
-	List<BizAnnotation> queryList(Map<String, Object> param);
+  // 使用@Selete注解和<script>实现动态查询
+  @Select({ 
+    "<script>",  // 使用<script>实现动态SQL
+    "SELECT id_, name_, age_ FROM biz_annotation", 
+    "<where>",
+    "<if test=\"id!=null\">AND id_= #{id}</if>",
+    "<if test=\"name!=null and name != ''\">AND name_ = #{name}</if>",
+    "<if test=\"age!=null\">AND age_ = #{age}</if>",
+    "</where>",
+    "</script>" 
+    })
+  // 使用@ResultMap 绑定声明的@Results，实现复用
+  @ResultMap("BizAnnotationResult")
+  List<BizAnnotation> queryList(Map<String, Object> param);
 }
 ```
 AnnotationMain.java：
@@ -1679,59 +1679,59 @@ import com.mutistic.mybatis.utils.PrintUtil;
 import com.mutistic.mybatis.java.annotation.mode.BizAnnotation;
 // MyBatis使用注解实现CRUD
 public class AnnotationMain {
-	public static void main(String[] args) {
-		AnnotationMapper mapper = SqlSeesionUtil.getMapper(AnnotationMapper.class);
-		PrintUtil.one("1、 MyBatis使用注解实现CRUD");
+  public static void main(String[] args) {
+    AnnotationMapper mapper = SqlSeesionUtil.getMapper(AnnotationMapper.class);
+    PrintUtil.one("1、 MyBatis使用注解实现CRUD");
 
-		showByQueryById(mapper);
-		showByQueryList(mapper);
-		BizAnnotation entity = showByInsert(mapper);
-		showByUpdate(mapper, entity);
-		showByDelete(mapper);
-		SqlSeesionUtil.close();
-	}
-	private static void showByQueryById(AnnotationMapper mapper) {
-		PrintUtil.one("2、使用@Selete注解实现数据查询：");
-		
-		BizAnnotation entity = mapper.queryById(1548225605590l);
-		PrintUtil.two("2.1、查询結果：", entity);
-	}
-	private static void showByQueryList(AnnotationMapper mapper) {
-		PrintUtil.one("3、使用@Selete注解和<script>实现动态查询：");
-		
-		Map<String, Object> param = new HashMap<String, Object>();
-		param.put("age", 18);
-		List<BizAnnotation> entityList = mapper.queryList(param);
- 		PrintUtil.two("3.1、查询結果：", entityList);
-	}
-	private static BizAnnotation showByInsert(AnnotationMapper mapper) {
-		PrintUtil.one("4、使用@Insert注解实现数据新增：");
-		
-		BizAnnotation entity = new BizAnnotation();
-		entity.setId(System.currentTimeMillis());
-		entity.setName("test");
-		entity.setAge(18);
-		
-		Long result = mapper.insertEntity(entity);
-		PrintUtil.two("4.1、新增结果：", result);
-		SqlSeesionUtil.commit();
-		return entity;
-	}
-	private static void showByUpdate(AnnotationMapper mapper, BizAnnotation entity) {
-		PrintUtil.one("5、使用@Update注解实现数据修改：");
-		
-		entity.setName("张三");
-		Long result = mapper.updateEntity(entity);
-		PrintUtil.two("5.1、修改结果：", result);
-		SqlSeesionUtil.commit();
-	}
-	private static void showByDelete(AnnotationMapper mapper) {
-		PrintUtil.one("6、使用@Delete注解实现数据删除：");
-		
-		Long result = mapper.deleteEntity(1548225597700l);
-		PrintUtil.two("6.1、删除结果：", result);
-		SqlSeesionUtil.commit();
-	}
+    showByQueryById(mapper);
+    showByQueryList(mapper);
+    BizAnnotation entity = showByInsert(mapper);
+    showByUpdate(mapper, entity);
+    showByDelete(mapper);
+    SqlSeesionUtil.close();
+  }
+  private static void showByQueryById(AnnotationMapper mapper) {
+    PrintUtil.one("2、使用@Selete注解实现数据查询：");
+    
+    BizAnnotation entity = mapper.queryById(1548225605590l);
+    PrintUtil.two("2.1、查询結果：", entity);
+  }
+  private static void showByQueryList(AnnotationMapper mapper) {
+    PrintUtil.one("3、使用@Selete注解和<script>实现动态查询：");
+    
+    Map<String, Object> param = new HashMap<String, Object>();
+    param.put("age", 18);
+    List<BizAnnotation> entityList = mapper.queryList(param);
+     PrintUtil.two("3.1、查询結果：", entityList);
+  }
+  private static BizAnnotation showByInsert(AnnotationMapper mapper) {
+    PrintUtil.one("4、使用@Insert注解实现数据新增：");
+    
+    BizAnnotation entity = new BizAnnotation();
+    entity.setId(System.currentTimeMillis());
+    entity.setName("test");
+    entity.setAge(18);
+    
+    Long result = mapper.insertEntity(entity);
+    PrintUtil.two("4.1、新增结果：", result);
+    SqlSeesionUtil.commit();
+    return entity;
+  }
+  private static void showByUpdate(AnnotationMapper mapper, BizAnnotation entity) {
+    PrintUtil.one("5、使用@Update注解实现数据修改：");
+    
+    entity.setName("张三");
+    Long result = mapper.updateEntity(entity);
+    PrintUtil.two("5.1、修改结果：", result);
+    SqlSeesionUtil.commit();
+  }
+  private static void showByDelete(AnnotationMapper mapper) {
+    PrintUtil.one("6、使用@Delete注解实现数据删除：");
+    
+    Long result = mapper.deleteEntity(1548225597700l);
+    PrintUtil.two("6.1、删除结果：", result);
+    SqlSeesionUtil.commit();
+  }
 }
 ```
 #### 2、MyBatis使用注解实现关联查询：  
@@ -1740,11 +1740,11 @@ BizMore.java：
 package com.mutistic.mybatis.java.annotation.mode;
 // 配合关系映射 
 public class BizMore {
-	private Long id;
-	private Long annotationId;
-	private String remark;
-	private BizAnnotation bizAnnotation;
-	// get/set
+  private Long id;
+  private Long annotationId;
+  private String remark;
+  private BizAnnotation bizAnnotation;
+  // get/set
 }
 ```
 RelevanceMapper.java：
@@ -1760,36 +1760,36 @@ import com.mutistic.mybatis.java.annotation.mode.BizAnnotation;
 import com.mutistic.mybatis.java.annotation.mode.BizMore;
 // 使用注解实现关联查询
 public interface RelevanceMapper {
-	// 使用@One注解实现一对一关联查询
-	@Select("SELECT id_, annotation_id, remark FROM biz_more WHERE id_ = #{id}")
-	@Results({
-		@Result(id=true, column="id_", property="id"),
-		@Result(column="annotation_id", property="annotationId"),
-		@Result(column="remark", property="remark"),
-		// 使用@One实现一对一关联查询
-		@Result(column="annotation_id", property="bizAnnotation",
-			one=@One(select="com.mutistic.mybatis.java.annotation.mapper.AnnotationMapper.queryById"))
-	})
-	BizMore queryByOneToOne(Long id);
-	// 使用@Many注解实现一对多关联查询
-	@Select("SELECT id_, name_, age_ FROM biz_annotation WHERE id_ = #{id}")
-	@Results(id = "annotationResult", value={
-			@Result(id=true, column="id_", property="id"),
-			@Result(column="name_", property="name"),
-			@Result(column="age_", property="age"),
-			// 使用@Many注解实现一对多关联查询
-			@Result(column="id_", property="bizMoreList",
-				many=@Many(select="com.mutistic.mybatis.java.annotation.mapper.RelevanceMapper.queryByAnnontationId"))
-		})
-	BizAnnotation queryByOneToMore(Long id);
-	
-	@Select("SELECT id_, annotation_id, remark FROM biz_more WHERE annotation_id = #{annotationId}")
-	@Results({
-		@Result(id=true, column="id_", property="id"),
-		@Result(column="annotation_id", property="annotationId"),
-		@Result(column="remark", property="remark"),
-	})
-	List<BizMore> queryByAnnontationId(Long annotationId);
+  // 使用@One注解实现一对一关联查询
+  @Select("SELECT id_, annotation_id, remark FROM biz_more WHERE id_ = #{id}")
+  @Results({
+    @Result(id=true, column="id_", property="id"),
+    @Result(column="annotation_id", property="annotationId"),
+    @Result(column="remark", property="remark"),
+    // 使用@One实现一对一关联查询
+    @Result(column="annotation_id", property="bizAnnotation",
+      one=@One(select="com.mutistic.mybatis.java.annotation.mapper.AnnotationMapper.queryById"))
+  })
+  BizMore queryByOneToOne(Long id);
+  // 使用@Many注解实现一对多关联查询
+  @Select("SELECT id_, name_, age_ FROM biz_annotation WHERE id_ = #{id}")
+  @Results(id = "annotationResult", value={
+      @Result(id=true, column="id_", property="id"),
+      @Result(column="name_", property="name"),
+      @Result(column="age_", property="age"),
+      // 使用@Many注解实现一对多关联查询
+      @Result(column="id_", property="bizMoreList",
+        many=@Many(select="com.mutistic.mybatis.java.annotation.mapper.RelevanceMapper.queryByAnnontationId"))
+    })
+  BizAnnotation queryByOneToMore(Long id);
+  
+  @Select("SELECT id_, annotation_id, remark FROM biz_more WHERE annotation_id = #{annotationId}")
+  @Results({
+    @Result(id=true, column="id_", property="id"),
+    @Result(column="annotation_id", property="annotationId"),
+    @Result(column="remark", property="remark"),
+  })
+  List<BizMore> queryByAnnontationId(Long annotationId);
 }
 ```
 RelevanceMain.java：
@@ -1802,24 +1802,24 @@ import com.mutistic.mybatis.java.utils.SqlSeesionUtil;
 import com.mutistic.mybatis.utils.PrintUtil;
 // MyBatis使用注解实现关联查询
 public class RelevanceMain {
-	public static void main(String[] args) {
-		RelevanceMapper mapper = SqlSeesionUtil.getMapper(RelevanceMapper.class);
-		PrintUtil.one("1、 MyBatis使用注解实现关联查询");
-		showByOneToOne(mapper);
-		showByOneToMore(mapper);
-		SqlSeesionUtil.close();
-	}
-	private static void showByOneToOne(RelevanceMapper mapper) {
-		PrintUtil.one("2、使用@One注解实现一对一关联查询：");
+  public static void main(String[] args) {
+    RelevanceMapper mapper = SqlSeesionUtil.getMapper(RelevanceMapper.class);
+    PrintUtil.one("1、 MyBatis使用注解实现关联查询");
+    showByOneToOne(mapper);
+    showByOneToMore(mapper);
+    SqlSeesionUtil.close();
+  }
+  private static void showByOneToOne(RelevanceMapper mapper) {
+    PrintUtil.one("2、使用@One注解实现一对一关联查询：");
 
-		BizMore entity = mapper.queryByOneToOne(111111l);
-		PrintUtil.two("2.1、查询结果：", "BizMore=" + entity + ", BizAnnotation=" + entity.getBizAnnotation());
-	}
-	private static void showByOneToMore(RelevanceMapper mapper) {
-		PrintUtil.one("3、使用@Many注解实现一对多关联查询：");
-		BizAnnotation entity = mapper.queryByOneToMore(1548226948040l);
-		PrintUtil.two("3.1、查询结果：", "BizAnnotation=" + entity + ", BizMoreList=" + entity.getBizMoreList());
-	}
+    BizMore entity = mapper.queryByOneToOne(111111l);
+    PrintUtil.two("2.1、查询结果：", "BizMore=" + entity + ", BizAnnotation=" + entity.getBizAnnotation());
+  }
+  private static void showByOneToMore(RelevanceMapper mapper) {
+    PrintUtil.one("3、使用@Many注解实现一对多关联查询：");
+    BizAnnotation entity = mapper.queryByOneToMore(1548226948040l);
+    PrintUtil.two("3.1、查询结果：", "BizAnnotation=" + entity + ", BizMoreList=" + entity.getBizMoreList());
+  }
 }
 ```
 #### 3、MyBatis使用@SelectProvider等注解实现CRUD：  
@@ -1836,24 +1836,24 @@ import org.apache.ibatis.annotations.UpdateProvider;
 import com.mutistic.mybatis.java.annotation.mode.BizAnnotation;
 // ProviderMapper 接口
 public interface ProviderMapper {
-	// 使用@InsertProvider注解实现数据新增
-	@InsertProvider(type=BizAnnotationSqlProvider.class, method="insertEntity")
-	Long insertEntity(BizAnnotation entity);
-	// 使用@UpdateProvider注解实现数据修改
-	@UpdateProvider(type=BizAnnotationSqlProvider.class, method="updateEntity")
-	Long updateEntity(BizAnnotation entity);
-	// 使用@DeleteProvider注解实现删除
-	@DeleteProvider(type=BizAnnotationSqlProvider.class, method="deleteEntity")
-	Long deleteEntity(Long id);
-	// 使用@SelectProvider注解实现查询
-	@SelectProvider(type=BizAnnotationSqlProvider.class, method="queryById")
-	// 非此Mapper定义的resultMap时，需要指定ResultMap全限定名
-	@ResultMap("com.mutistic.mybatis.java.annotation.mapper.AnnotationMapper.BizAnnotationResult")
-	BizAnnotation queryById(Long id);
-	// 使用@SelectProvider注解实现数据集合查询
-	@SelectProvider(type=BizAnnotationSqlProvider.class, method="queryList")
-	@ResultMap("com.mutistic.mybatis.java.annotation.mapper.AnnotationMapper.BizAnnotationResult")
-	List<BizAnnotation> queryList(Map<String, Object> param);
+  // 使用@InsertProvider注解实现数据新增
+  @InsertProvider(type=BizAnnotationSqlProvider.class, method="insertEntity")
+  Long insertEntity(BizAnnotation entity);
+  // 使用@UpdateProvider注解实现数据修改
+  @UpdateProvider(type=BizAnnotationSqlProvider.class, method="updateEntity")
+  Long updateEntity(BizAnnotation entity);
+  // 使用@DeleteProvider注解实现删除
+  @DeleteProvider(type=BizAnnotationSqlProvider.class, method="deleteEntity")
+  Long deleteEntity(Long id);
+  // 使用@SelectProvider注解实现查询
+  @SelectProvider(type=BizAnnotationSqlProvider.class, method="queryById")
+  // 非此Mapper定义的resultMap时，需要指定ResultMap全限定名
+  @ResultMap("com.mutistic.mybatis.java.annotation.mapper.AnnotationMapper.BizAnnotationResult")
+  BizAnnotation queryById(Long id);
+  // 使用@SelectProvider注解实现数据集合查询
+  @SelectProvider(type=BizAnnotationSqlProvider.class, method="queryList")
+  @ResultMap("com.mutistic.mybatis.java.annotation.mapper.AnnotationMapper.BizAnnotationResult")
+  List<BizAnnotation> queryList(Map<String, Object> param);
 }
 ```
 BizAnnotationSqlProvider.java：
@@ -1864,72 +1864,72 @@ import org.apache.ibatis.jdbc.SQL;
 import com.mutistic.mybatis.java.annotation.mode.BizAnnotation;
 // SqlProvider动态拼接SQL实现类
 public class BizAnnotationSqlProvider {
-	// 新增数据的拼接SQL方法
-	public String insertEntity(final BizAnnotation entity) {
-		return new SQL() {
-			{
-				INSERT_INTO("biz_annotation");
-				VALUES("id_", entity.getId() + "");
-				VALUES("name_", "'" + entity.getName() + "'");
-				VALUES("age_", entity.getAge() + "");
-			}
-		}.toString();
-	}
-	// 修改数据的拼接SQL方法
-	public String updateEntity(final BizAnnotation entity) {
-		return new SQL() {
-			{
-				UPDATE("biz_annotation");
-				if (entity.getName() != null) {
-					SET("name_ = '" + entity.getName() + "'");
-				}
-				if (entity.getAge() != null) {
-					SET("age_ = " + entity.getAge());
-				}
-				WHERE("id_ = " + entity.getId());
-			}
-		}.toString();
-	}
-	// 删除数据的拼接SQL方法
-	public String deleteEntity() {
-		return new SQL() {
-			{
-				DELETE_FROM("biz_annotation");
-				WHERE("id_ = #{id}");
-			}
-		}.toString();
-	}
-	// 根据ID查询数据的拼接SQL方法
-	public String queryById(final Long id) {
-		return new SQL() {
-			{
-				SELECT("id_, name_, age_");
-				FROM("biz_annotation");
-				if (null != id) {
-					WHERE("id_ = #{id}");
-				}
-			}
-		}.toString();
-	}
-	// 动态查询数据的拼接SQL方法
-	public String queryList(final Map<String, Object> param) {
-		return new SQL() {
-			{
-				SELECT("id_, name_, age_");
-				FROM("biz_annotation");
-				if (param != null && param.size() > 0) {
-					StringBuffer sb = new StringBuffer();
-					if (param.containsKey("name")) {
-						sb.append("AND name_ = " + param.get("name"));
-					}
-					if (param.containsKey("age")) {
-						sb.append("AND age_ = " + param.get("age"));
-					}
-					WHERE(sb.toString().replaceFirst("AND", ""));
-				}
-			}
-		}.toString();
-	}
+  // 新增数据的拼接SQL方法
+  public String insertEntity(final BizAnnotation entity) {
+    return new SQL() {
+      {
+        INSERT_INTO("biz_annotation");
+        VALUES("id_", entity.getId() + "");
+        VALUES("name_", "'" + entity.getName() + "'");
+        VALUES("age_", entity.getAge() + "");
+      }
+    }.toString();
+  }
+  // 修改数据的拼接SQL方法
+  public String updateEntity(final BizAnnotation entity) {
+    return new SQL() {
+      {
+        UPDATE("biz_annotation");
+        if (entity.getName() != null) {
+          SET("name_ = '" + entity.getName() + "'");
+        }
+        if (entity.getAge() != null) {
+          SET("age_ = " + entity.getAge());
+        }
+        WHERE("id_ = " + entity.getId());
+      }
+    }.toString();
+  }
+  // 删除数据的拼接SQL方法
+  public String deleteEntity() {
+    return new SQL() {
+      {
+        DELETE_FROM("biz_annotation");
+        WHERE("id_ = #{id}");
+      }
+    }.toString();
+  }
+  // 根据ID查询数据的拼接SQL方法
+  public String queryById(final Long id) {
+    return new SQL() {
+      {
+        SELECT("id_, name_, age_");
+        FROM("biz_annotation");
+        if (null != id) {
+          WHERE("id_ = #{id}");
+        }
+      }
+    }.toString();
+  }
+  // 动态查询数据的拼接SQL方法
+  public String queryList(final Map<String, Object> param) {
+    return new SQL() {
+      {
+        SELECT("id_, name_, age_");
+        FROM("biz_annotation");
+        if (param != null && param.size() > 0) {
+          StringBuffer sb = new StringBuffer();
+          if (param.containsKey("name")) {
+            sb.append("AND name_ = " + param.get("name"));
+          }
+          if (param.containsKey("age")) {
+            sb.append("AND age_ = " + param.get("age"));
+          }
+          WHERE(sb.toString().replaceFirst("AND", ""));
+        }
+      }
+    }.toString();
+  }
 }
 ```
 ProviderMain.java：
@@ -1944,59 +1944,59 @@ import com.mutistic.mybatis.java.utils.SqlSeesionUtil;
 import com.mutistic.mybatis.utils.PrintUtil;
 // MyBatis使用@SelectProvider等注解实现CRUD
 public class ProviderMain {
-	public static void main(String[] args) {
-		ProviderMapper mapper = SqlSeesionUtil.getMapper(ProviderMapper.class);
-		PrintUtil.one("1、 MyBatis使用@SelectProvider等注解实现CRUD");
+  public static void main(String[] args) {
+    ProviderMapper mapper = SqlSeesionUtil.getMapper(ProviderMapper.class);
+    PrintUtil.one("1、 MyBatis使用@SelectProvider等注解实现CRUD");
 
-		showByQueryById(mapper);
-		showByQueryList(mapper);
-		BizAnnotation entity = showByInsert(mapper);
-		showByUpdate(mapper, entity);
-		showByDelete(mapper);
-		SqlSeesionUtil.close();
-	}
-	private static void showByQueryById(ProviderMapper mapper) {
-		PrintUtil.one("2、使用@SeleteProvider注解实现数据查询：");
-		
-		BizAnnotation entity = mapper.queryById(1548226948040l);
-		PrintUtil.two("2.1、查询結果：", entity);
-	}
-	private static void showByQueryList(ProviderMapper mapper) {
-		PrintUtil.one("3、使用@SeleteProvider注解和<script>实现动态查询：");
-		
-		Map<String, Object> param = new HashMap<String, Object>();
-		param.put("age", 18);
-		List<BizAnnotation> entityList = mapper.queryList(param);
- 		PrintUtil.two("3.1、查询結果：", entityList);
-	}
-	private static BizAnnotation showByInsert(ProviderMapper mapper) {
-		PrintUtil.one("4、使用@InsertProvider注解实现数据新增：");
-		
-		BizAnnotation entity = new BizAnnotation();
-		entity.setId(System.currentTimeMillis());
-		entity.setName("test");
-		entity.setAge(18);
-		
-		Long result = mapper.insertEntity(entity);
-		PrintUtil.two("4.1、新增结果：", result);
-		SqlSeesionUtil.commit();
-		return entity;
-	}
-	private static void showByUpdate(ProviderMapper mapper, BizAnnotation entity) {
-		PrintUtil.one("5、使用@UpdateProvider注解实现数据修改：");
-		
-		entity.setName("张三");
-		Long result = mapper.updateEntity(entity);
-		PrintUtil.two("5.1、修改结果：", result);
-		SqlSeesionUtil.commit();
-	}
-	private static void showByDelete(ProviderMapper mapper) {
-		PrintUtil.one("6、使用@DeleteProvider注解实现数据删除：");
-		
-		Long result = mapper.deleteEntity(1548225597700l);
-		PrintUtil.two("6.1、删除结果：", result);
-		SqlSeesionUtil.commit();
-	}
+    showByQueryById(mapper);
+    showByQueryList(mapper);
+    BizAnnotation entity = showByInsert(mapper);
+    showByUpdate(mapper, entity);
+    showByDelete(mapper);
+    SqlSeesionUtil.close();
+  }
+  private static void showByQueryById(ProviderMapper mapper) {
+    PrintUtil.one("2、使用@SeleteProvider注解实现数据查询：");
+    
+    BizAnnotation entity = mapper.queryById(1548226948040l);
+    PrintUtil.two("2.1、查询結果：", entity);
+  }
+  private static void showByQueryList(ProviderMapper mapper) {
+    PrintUtil.one("3、使用@SeleteProvider注解和<script>实现动态查询：");
+    
+    Map<String, Object> param = new HashMap<String, Object>();
+    param.put("age", 18);
+    List<BizAnnotation> entityList = mapper.queryList(param);
+     PrintUtil.two("3.1、查询結果：", entityList);
+  }
+  private static BizAnnotation showByInsert(ProviderMapper mapper) {
+    PrintUtil.one("4、使用@InsertProvider注解实现数据新增：");
+    
+    BizAnnotation entity = new BizAnnotation();
+    entity.setId(System.currentTimeMillis());
+    entity.setName("test");
+    entity.setAge(18);
+    
+    Long result = mapper.insertEntity(entity);
+    PrintUtil.two("4.1、新增结果：", result);
+    SqlSeesionUtil.commit();
+    return entity;
+  }
+  private static void showByUpdate(ProviderMapper mapper, BizAnnotation entity) {
+    PrintUtil.one("5、使用@UpdateProvider注解实现数据修改：");
+    
+    entity.setName("张三");
+    Long result = mapper.updateEntity(entity);
+    PrintUtil.two("5.1、修改结果：", result);
+    SqlSeesionUtil.commit();
+  }
+  private static void showByDelete(ProviderMapper mapper) {
+    PrintUtil.one("6、使用@DeleteProvider注解实现数据删除：");
+    
+    Long result = mapper.deleteEntity(1548225597700l);
+    PrintUtil.two("6.1、删除结果：", result);
+    SqlSeesionUtil.commit();
+  }
 }
 ```
 
