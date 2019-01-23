@@ -1,7 +1,5 @@
 package com.mutistic.mybatis.java.utils;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 
 import org.apache.ibatis.session.SqlSession;
@@ -20,11 +18,16 @@ import com.mutistic.mybatis.utils.PrintUtil;
  */
 public class SqlSeesionUtil {
 
-	/** Mybatis Config 配置文件名称 */
+	/** 配置文件名称 */
 	private final static String MYBATIS_CONFIG_XML = "mybatis-config.xml";
-	/** Mybatis Config 配置文件相对路径 */
-	private final static String MYBATIS_CONFIG_XML_URL = "src/main/java/com/mutistic/mybatis/java/resources/"
-			+ MYBATIS_CONFIG_XML;
+	/** 配置文件路径 */
+	private final static String MYBATIS_CONFIG_XML_FILE_URL = "com/mutistic/mybatis/java/resources/"+MYBATIS_CONFIG_XML;
+	/** 配置文件相对根路径 */
+	private final static String MYBATIS_CONFIG_XML_SRC_URL = "src/main/java/" + MYBATIS_CONFIG_XML;
+	/** 配置文件编译后全路径 */
+	private final static String MYBATIS_CONFIG_XML_CLASSES_PATH = Thread.class.getResource("/") + MYBATIS_CONFIG_XML;
+	/** 配置文件编译后可用路径 */
+	private final static String MYBATIS_CONFIG_XML_CLASSES_URL = MYBATIS_CONFIG_XML_CLASSES_PATH.replace("file:/", "");
 	/** SqlSessionFactory工厂类 */
 	private static SqlSessionFactory sqlSessionFactory;
 	/** SqlSession数据库会话 */
@@ -40,7 +43,7 @@ public class SqlSeesionUtil {
 		try {
 			if (sqlSessionFactory == null) {
 				InputStream inputStream = ResourcesTest.class.getResourceAsStream(MYBATIS_CONFIG_XML);
-//				FileInputStream inputStream = new FileInputStream(new File(MYBATIS_CONFIG_XML_URL));
+				// FileInputStream inputStream = new FileInputStream(new  File(MYBATIS_CONFIG_XML_CLASSES_URL));
 				sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
 
 				PrintUtil.one("0、创建SqlSessionFactory工厂类：");

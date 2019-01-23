@@ -19,21 +19,22 @@ public class OtherMain {
 	public static void main(String[] args) {
 		OtherMapper mapper = SqlSeesionUtil.getMapper(OtherMapper.class);
 		PrintUtil.one("1、 MyBatis处理Blob/Clob数据类型");
-
 		showByInsertEntity(mapper);
 		showByQueryById(mapper);
 		showByQueryParams(mapper);
 		SqlSeesionUtil.close();
 	}
 
-	private final static String PNG_URL = "src/main/java/com/mutistic/mybatis/java/other/";
+	private final static String SRC_URL = "src/main/java/com/mutistic/mybatis/java/other/";
+	private final static String CLASS_PATH = OtherMain.class.getResource("/") + "com/mutistic/mybatis/java/other/";
+	private final static String CLASS_URL = CLASS_PATH.replace("file:/", "");
 	private static void showByInsertEntity(OtherMapper mapper) {
 		PrintUtil.one("2、blob/clob数据类型的新增：");
 		BizTest entity = new BizTest();
 		entity.setId(System.currentTimeMillis());
 		try {
 			// InputStream inputStream = BizTest.class.getResourceAsStream("longBlob.png");
-			FileInputStream inputStream = new FileInputStream(new File(PNG_URL + "longBlob.png"));
+			FileInputStream inputStream = new FileInputStream(new File(CLASS_URL + "longBlob.png"));
 			byte[] longBlob = new byte[inputStream.available()];
 			inputStream.read(longBlob);
 			inputStream.close();
@@ -54,10 +55,10 @@ public class OtherMain {
 		PrintUtil.two("3.1、查询结果：", entity);
 
 		try {
-			FileOutputStream outputStream = new FileOutputStream(new File(PNG_URL + "longBlob2.png"));
+			FileOutputStream outputStream = new FileOutputStream(new File(SRC_URL + "longBlob2.png"));
 			outputStream.write(entity.getLongBlob());
 			outputStream.close();
-			PrintUtil.two("3.2、将读取到的文件成功写入到：", PNG_URL + "longBlob2.png");
+			PrintUtil.two("3.2、将读取到的文件成功写入到：", SRC_URL + "longBlob2.png");
 		} catch (Exception e) {
 			PrintUtil.err("写入文件出现异常，打印堆栈异常信息：" + e.getMessage());
 		}

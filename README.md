@@ -1524,8 +1524,7 @@ PaginationMapper.xml：
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper 
  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper
-	namespace="com.mutistic.mybatis.java.pagination.mapper.PaginationMapper">
+<mapper namespace="com.mutistic.mybatis.java.pagination.mapper.PaginationMapper">
 	<!-- 逻辑分页（通过RowBounds查询到所有的数据后在内存中分页，不建议使用） -->
 	<select id="queryByLogicPaging" resultMap="com.mutistic.mybatis.java.select.mapper.SelectMapper.resultMap">
 		SELECT
@@ -1546,6 +1545,7 @@ PaginationMapper.xml：
 		<if test="limit != null"> LIMIT ${limit} </if>
 		<if test="offset != null"> OFFSET ${offset} </if>
 	</select>
+</mapper>
 ```
 PaginationMain.java：
 ```Java
