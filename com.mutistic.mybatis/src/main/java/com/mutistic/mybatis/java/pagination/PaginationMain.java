@@ -37,8 +37,8 @@ public class PaginationMain {
 		PrintUtil.one("3、 Mysql物理分页查询");
 		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("consigneeNameLike", "test");
-		param.put("limit", 3); // 每页内容数(可理解为： pageSize)
-		param.put("offset", 0); // 当前页数 (可理解未：pageIndex)
+		param.put("limit", 3); // // 表示每次返回的数据条数
+		param.put("offset", 0); // //表示从该参数的下一条数据开始
 		List<BizAddress> entityList = mapper.queryByDBPaging(param);
 		PrintUtil.two("3.1、查询结果", "entitySize=" + entityList.size() + ", entityList=" + entityList);
 	}

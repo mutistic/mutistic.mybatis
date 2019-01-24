@@ -46,23 +46,23 @@ public class SelectMain {
 
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("consigneeNameLike", "test");
+		params.put("limit", 3);
+		params.put("offset", 0);
 		List<Long> idList = mapper.selectCount(params);
 		PrintUtil.two("4.1、查询总条数（id集合）：", "idList=" + idList);
 		PrintUtil.println();
 
-		Map<String, Object> pageParam = new HashMap<String, Object>();
-		pageParam.put("offset", 0);
-		pageParam.put("limit", 10);
-		pageParam.put("ids", idList);
-		List<BizAddress> resultList = mapper.queryPage(pageParam);
+		Integer limit = (Integer) params.get("limit"); // 表示每次返回的数据条数
+		Integer offset = (Integer) params.get("offset"); //表示从该参数的下一条数据开始
+		params.put("offset", offset*limit);
+		
+		List<BizAddress> resultList = mapper.queryPage(params);
 		PrintUtil.two("4.2、分页查询结果（集合大小）：", "idList=" + resultList.size());
 		PrintUtil.println();
 
-		Integer offset = (Integer) pageParam.get("offset");
-		Integer limit = (Integer) pageParam.get("limit");
 		Pagination<BizAddress> page = new Pagination<BizAddress>();
 		page.setTotal(Long.valueOf(idList.size()));
-		page.setPages(offset);
+		page.setPages(offset++);
 		page.setSize(resultList.size());
 		page.setRecords(resultList);
 		

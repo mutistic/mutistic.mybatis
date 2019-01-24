@@ -1,0 +1,239 @@
+{
+	"id": "f9a219d0-4052-31d0-7092-097630b6dffb",
+	"name": "SpringBoot-MyBatis",
+	"description": "",
+	"order": [],
+	"folders": [
+		{
+			"name": "MyBatis",
+			"description": "",
+			"collectionId": "f9a219d0-4052-31d0-7092-097630b6dffb",
+			"order": [
+				"1a301795-ed5f-e34f-7700-594bb64bc63b",
+				"86a8159f-cad5-383e-ea32-91cc2cbdfd00",
+				"b21a6888-0e3b-8b21-5802-2334f21009d3",
+				"a03b4706-1a9c-f2c1-68d1-51a525c092b5",
+				"2adf1927-5f17-4620-12d3-ff545d2c1398",
+				"cf8327af-327b-9b92-1ad0-a9dba844cfa4"
+			],
+			"owner": "2263626",
+			"folders_order": [],
+			"id": "edd112e2-e8e7-ff8b-eced-91239b60927b"
+		}
+	],
+	"folders_order": [
+		"edd112e2-e8e7-ff8b-eced-91239b60927b"
+	],
+	"timestamp": 1548320581624,
+	"owner": "2263626",
+	"public": false,
+	"requests": [
+		{
+			"id": "1a301795-ed5f-e34f-7700-594bb64bc63b",
+			"headers": "",
+			"headerData": [],
+			"url": "http://localhost:8080/bizUser/queryById?id=2222222",
+			"folder": "edd112e2-e8e7-ff8b-eced-91239b60927b",
+			"queryParams": [
+				{
+					"key": "id",
+					"value": "2222222",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				}
+			],
+			"preRequestScript": null,
+			"pathVariables": [],
+			"pathVariableData": [],
+			"method": "GET",
+			"data": null,
+			"dataMode": "params",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": "[]",
+			"time": 1548318556971,
+			"name": "根据ID查询数据",
+			"description": "",
+			"collectionId": "f9a219d0-4052-31d0-7092-097630b6dffb",
+			"responses": [],
+			"collection_id": "f691a14f-9f25-739d-35b9-326b653233f3"
+		},
+		{
+			"id": "2adf1927-5f17-4620-12d3-ff545d2c1398",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:8080/bizUser/queryList",
+			"folder": "edd112e2-e8e7-ff8b-eced-91239b60927b",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": [],
+			"pathVariableData": [],
+			"method": "PUT",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": "[]",
+			"time": 1548318759069,
+			"name": "查询数据集合",
+			"description": "",
+			"collectionId": "f9a219d0-4052-31d0-7092-097630b6dffb",
+			"responses": [],
+			"rawModeData": "{\n\t\"mobile\": \"1223234234\"\n}",
+			"collection_id": "f691a14f-9f25-739d-35b9-326b653233f3"
+		},
+		{
+			"id": "86a8159f-cad5-383e-ea32-91cc2cbdfd00",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:8080/bizUser/insertEntity",
+			"folder": "edd112e2-e8e7-ff8b-eced-91239b60927b",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": [],
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": "[]",
+			"time": 1548316489991,
+			"name": "新增数据",
+			"description": "",
+			"collectionId": "f9a219d0-4052-31d0-7092-097630b6dffb",
+			"responses": [],
+			"rawModeData": "{\n    \"createBy\": 99999,\n    \"updateBy\": 99999,\n    \"enable\": 1,\n    \"remark\": \"test\",\n    \"versionNo\": 0,\n    \"name\": \"testname\",\n    \"account\": \"test\",\n    \"password\": \"test\",\n    \"mobile\": \"1223234234\",\n    \"status\": 0\n}",
+			"collection_id": "f691a14f-9f25-739d-35b9-326b653233f3"
+		},
+		{
+			"id": "a03b4706-1a9c-f2c1-68d1-51a525c092b5",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:8080/bizUser/deleteEntity?id=1548316527886",
+			"folder": "edd112e2-e8e7-ff8b-eced-91239b60927b",
+			"queryParams": [
+				{
+					"key": "id",
+					"value": "1548316527886",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				}
+			],
+			"preRequestScript": null,
+			"pathVariables": [],
+			"pathVariableData": [],
+			"method": "DELETE",
+			"data": [
+				{
+					"key": "id",
+					"value": "1548316527886",
+					"description": "",
+					"type": "text",
+					"enabled": false
+				}
+			],
+			"dataMode": "params",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": "[]",
+			"time": 1548318672720,
+			"name": "删除数据",
+			"description": "",
+			"collectionId": "f9a219d0-4052-31d0-7092-097630b6dffb",
+			"responses": [],
+			"collection_id": "f691a14f-9f25-739d-35b9-326b653233f3"
+		},
+		{
+			"id": "b21a6888-0e3b-8b21-5802-2334f21009d3",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:8080/bizUser/insertEntity",
+			"folder": "edd112e2-e8e7-ff8b-eced-91239b60927b",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": [],
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": "[]",
+			"time": 1548318573867,
+			"name": "修改数据",
+			"description": "",
+			"collectionId": "f9a219d0-4052-31d0-7092-097630b6dffb",
+			"responses": [],
+			"rawModeData": "{\n    \"id\": 2222222,\n    \"createBy\": 99999,\n    \"updateBy\": 99999,\n    \"enable\": 1,\n    \"remark\": \"test\",\n    \"versionNo\": 0,\n    \"name\": \"testname\",\n    \"account\": \"test\",\n    \"password\": \"test\",\n    \"mobile\": \"1223234234\",\n    \"status\": 0\n}",
+			"collection_id": "f691a14f-9f25-739d-35b9-326b653233f3"
+		},
+		{
+			"id": "cf8327af-327b-9b92-1ad0-a9dba844cfa4",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:8080/bizUser/queryPage",
+			"folder": "edd112e2-e8e7-ff8b-eced-91239b60927b",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": [],
+			"pathVariableData": [],
+			"method": "PUT",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": null,
+			"helperAttributes": "null",
+			"time": 1548319571770,
+			"name": "分页查询数据集合",
+			"description": null,
+			"collectionId": "f9a219d0-4052-31d0-7092-097630b6dffb",
+			"responses": [],
+			"auth": null,
+			"events": null,
+			"descriptionFormat": null,
+			"variables": null,
+			"rawModeData": "{\n  \"mobile\": \"1223234234\",\n  \"limit\": 10,\n  \"offset\": 3\n}",
+			"collection_id": "f691a14f-9f25-739d-35b9-326b653233f3"
+		}
+	]
+}

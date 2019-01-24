@@ -22,6 +22,7 @@
 10. <a href="#a_other">MyBatis处理Blob/Clob数据类型</a>
 11. <a href="#a_pagination">MyBatis分页查询</a>
 12. <a href="#a_annotation">MyBatis使用注解实现CRUD与关联查询</a>
+13. <a href="#a_springboot">SpringBoot集成MyBatis</a>
 98. <a href="#a_notes">Notes</a>
 99. <a href="#a_down">down</a>
 
@@ -682,25 +683,25 @@ public class SelectMain {
   private static void showByQueryPage(SelectMapper mapper) {
     PrintUtil.one("4、根据Map分页：");
 
-    Map<String, Object> params = new HashMap<String, Object>();
-    params.put("consigneeNameLike", "test");
-    List<Long> idList = mapper.selectCount(params);
-    PrintUtil.two("4.1、查询总条数（id集合）：", "idList=" + idList);
-    PrintUtil.println();
+  Map<String, Object> params = new HashMap<String, Object>();
+  params.put("consigneeNameLike", "test");
+  params.put("limit", 3);
+  params.put("offset", 0);
+  List<Long> idList = mapper.selectCount(params);
+  PrintUtil.two("4.1、查询总条数（id集合）：", "idList=" + idList);
+  PrintUtil.println();
 
-    Map<String, Object> pageParam = new HashMap<String, Object>();
-    pageParam.put("offset", 0);
-    pageParam.put("limit", 10);
-    pageParam.put("ids", idList);
-    List<BizBuyAddress> resultList = mapper.queryPage(pageParam);
-    PrintUtil.two("4.2、分页查询结果（集合大小）：", "idList=" + resultList.size());
-    PrintUtil.println();
+  Integer limit = (Integer) params.get("limit"); // 表示每次返回的数据条数
+  Integer offset = (Integer) params.get("offset"); //表示从该参数的下一条数据开始
+  params.put("offset", offset*limit);
+  
+  List<BizAddress> resultList = mapper.queryPage(params);
+  PrintUtil.two("4.2、分页查询结果（集合大小）：", "idList=" + resultList.size());
+  PrintUtil.println();
 
-    Integer offset = (Integer) pageParam.get("offset");
-    Integer limit = (Integer) pageParam.get("limit");
-    Pagination<BizBuyAddress> page = new Pagination<BizBuyAddress>();
-    page.setTotal(Long.valueOf(idList.size()));
-    page.setPages(offset);
+  Pagination<BizAddress> page = new Pagination<BizAddress>();
+  page.setTotal(Long.valueOf(idList.size()));
+  page.setPages(offset++);
     page.setSize(resultList.size());
     page.setRecords(resultList);
     
@@ -1603,7 +1604,7 @@ public class PaginationMain {
 ```
 
 ---
-### <a id="a_annotation">十二、MyBatis使用注解实现CRUD与关联查询</a> <a href="#a_pagination">last</a> <a href="#">next</a>
+### <a id="a_annotation">十二、MyBatis使用注解实现CRUD与关联查询</a> <a href="#a_pagination">last</a> <a href="#a_springboot">next</a>
 #### 1、MyBatis使用注解实现CRUD：  
 BizAnnotation.java：
 ```Java
@@ -2001,9 +2002,476 @@ public class ProviderMain {
 ```
 
 ---
+### <a id="a_springboot">十三、SpringBoot集成MyBatis</a> <a href="#a_annotation">last</a> <a href="#">next</a>
+#### 1、项目配置文件：  
+pom.xml【核心架包依赖】：
+```xml
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+<!-- Mybatis整合的spring boot依赖 -->
+<dependency>
+  <groupId>org.mybatis.spring.boot</groupId>
+  <artifactId>mybatis-spring-boot-starter</artifactId>
+   <version>1.3.2</version>
+</dependency>
+<!-- Mysql数据库驱动 -->
+<dependency>
+  <groupId>mysql</groupId>
+  <artifactId>mysql-connector-java</artifactId>
+</dependency>
+```
+application.properties【属性配置文件】:
+```properties
+#配置jdbc-dataSource信息：参考类：org.springframework.boot.autoconfigure.jdbc.DataSourceProperties
+## 配置jdbc驱动：使用mysql驱动
+spring.datasource.driver-class-name=com.mysql.jdbc.Driver
+## 配置 jdbc url
+spring.datasource.url=jdbc:mysql://127.0.0.1:3306/mybatis?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false
+## 配置 jdbc 用户名
+spring.datasource.username=root
+## 配置 jdbc 密码
+spring.datasource.password=root
+
+# MyBatis 配置项：更多配置参考：org.mybatis.spring.boot.autoconfigure.MybatisProperties
+## 指定MyBatis实体类所在的包，用于生成实体对应的简称
+mybatis.type-aliases-package=com.mutistic.mybatis.boot.model
+## 指定Mapper.xml映射文件所在的包
+mybatis.mapper-locations=classpath:com/mutistic/mybatis/boot/mapper/xml/*.xml
+
+## 是否显示SQL
+spring.jpa.show-sql=true
+## 定义Mapper日志级别
+logging.level.com.mutistic.mybatis.boot.mapper=DEBUG
+```
+#### 2、配置类：  
+Application.java【启动类配置】：
+```Java
+package com.mutistic.mybatis;
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.ComponentScan.Filter;
+import org.springframework.context.annotation.FilterType;
+import com.mutistic.mybatis.boot.config.ExcludeFilter;
+
+@SpringBootApplication
+//@EnableAutoConfiguration
+// 过滤加载为spring bean的类
+@ComponentScan(useDefaultFilters = true, excludeFilters = {
+    @Filter(type = FilterType.CUSTOM, classes = ExcludeFilter.class) })
+// MyBatis 扫描 Mapper.xml
+@MapperScan(basePackages="com.mutistic.mybatis.boot.mapper")
+public class Application {
+  public static void main(String[] args) {
+    SpringApplication.run(Application.class, args);
+  }
+}
+```
+ExcludeFilter.java【自定义TypeFilter过滤器】：
+```Java
+package com.mutistic.mybatis.boot.config;
+import java.io.IOException;
+import org.springframework.core.type.ClassMetadata;
+import org.springframework.core.type.classreading.MetadataReader;
+import org.springframework.core.type.classreading.MetadataReaderFactory;
+import org.springframework.core.type.filter.TypeFilter;
+import com.mutistic.mybatis.utils.PrintUtil;
+// 排除加载类的TypeFilter
+public class ExcludeFilter implements TypeFilter {
+  // 匹配规则
+  @Override
+  public boolean match(MetadataReader reader, MetadataReaderFactory factory) throws IOException {
+    ClassMetadata meader = reader.getClassMetadata();
+    if(meader != null && (meader.getClassName().contains("com.mutistic.mybatis.java")
+        || meader.getClassName().contains("com.mutistic.mybatis.generate"))) {
+      PrintUtil.three("ExcludeFilter：过滤", meader.getClassName());
+      return true;
+    }
+    return false;
+  }
+}
+```
+#### 3、Controller/Service/Mapper/Model：
+BizUserController.java【Controller类】：
+```Java
+package com.mutistic.mybatis.boot.controller;
+import java.util.List;
+import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import com.mutistic.mybatis.boot.model.BizUser;
+import com.mutistic.mybatis.boot.model.Pagination;
+import com.mutistic.mybatis.boot.service.IBizUserService;
+@RestController
+@RequestMapping("/bizUser/")
+public class BizUserController {
+  // 自动注入 IBizUserService
+  @Autowired
+  private IBizUserService bizUserService;
+
+  // 新增数据
+  @PostMapping("insertEntity")
+  public Long insertEntity(@RequestBody BizUser entity) {
+    return bizUserService.insertEntity(entity);
+  }
+  // 修改数据
+  @PostMapping("updateEntity")
+  public Long updateEntity(@RequestBody BizUser entity) {
+    return bizUserService.updateEntity(entity);
+  }
+  // 删除数据
+  @DeleteMapping("deleteEntity")
+  public Long deleteEntity(Long id) {
+    return bizUserService.deleteEntity(id);
+  }
+  // 根据ID查询数据
+  @GetMapping("queryById")
+  public BizUser queryById(Long id) {
+    return bizUserService.queryById(id);
+  }
+  // 查询数据集合
+  @PutMapping("queryList")
+  public List<BizUser> queryList(@RequestBody Map<String, Object> param) {
+    return bizUserService.queryList(param);
+  }
+  // 分页查询数据集合
+  @PutMapping("queryPage")
+  public Pagination<BizUser> queryPage(@RequestBody Map<String, Object> param) {
+    return bizUserService.queryPage(param);
+  }
+}
+```
+IBizUserService.java【Service接口】：
+```Java
+package com.mutistic.mybatis.boot.service;
+import java.util.List;
+import java.util.Map;
+import com.mutistic.mybatis.boot.model.BizUser;
+import com.mutistic.mybatis.boot.model.Pagination;
+public interface IBizUserService {
+  Long insertEntity(BizUser entity);
+  Long updateEntity(BizUser entity);
+  Long deleteEntity(Long id);
+  BizUser queryById(Long id);
+  List<BizUser> queryList(Map<String, Object> param);
+  List<Long> selectIds(Map<String, Object> param);
+  Pagination<BizUser> queryPage(Map<String, Object> param);
+}
+```
+BizUserServiceImpl.java【Service接口实现类】：
+```Java
+package com.mutistic.mybatis.boot.service.impl;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.mutistic.mybatis.boot.mapper.BizUserMapper;
+import com.mutistic.mybatis.boot.model.BizUser;
+import com.mutistic.mybatis.boot.model.Pagination;
+import com.mutistic.mybatis.boot.service.IBizUserService;
+@Service("BizUserService")
+public class BizUserServiceImpl implements IBizUserService {
+  // 自动注入 BizUserMapper
+  @Autowired
+  private BizUserMapper bizUserMapper;
+  @Override
+  public Long insertEntity(BizUser entity) {
+    entity.setId(System.currentTimeMillis());
+    entity.setCreateTime(new Date());
+    entity.setUpdateTime(entity.getCreateTime());
+    return bizUserMapper.insertEntity(entity);
+  }
+  @Override
+  public Long updateEntity(BizUser entity) {
+    entity.setUpdateTime(new Date());
+    return bizUserMapper.updateEntity(entity);
+  }
+  @Override
+  public Long deleteEntity(Long id) {
+    return bizUserMapper.deleteEntity(id);
+  }
+  @Override
+  public BizUser queryById(Long id) {
+    return bizUserMapper.queryById(id);
+  }
+  @Override
+  public List<BizUser> queryList(Map<String, Object> param) {
+    return bizUserMapper.queryList(param);
+  }
+  @Override
+  public List<Long> selectIds(Map<String, Object> param) {
+    return bizUserMapper.selectIds(param);
+  }
+  @Override
+  public Pagination<BizUser> queryPage(Map<String, Object> param) {
+    Pagination<BizUser> page = new Pagination<BizUser>();
+    
+    // 查询数据总数
+    List<Long> ids = selectIds(param);
+    if(ids == null || ids.isEmpty()) {
+      return page;
+    }
+    
+    // 处理分页参数
+    if(!param.containsKey("limit")) {
+      param.put("limit", 10);
+    }
+    if(!param.containsKey("offset")) {
+      param.put("offset", 0);
+    }
+    Integer limit = (Integer) param.get("limit"); // 表示每次返回的数据条数
+    Integer offset = (Integer) param.get("offset"); //表示从该参数的下一条数据开始
+    param.put("offset", offset*limit);
+    
+    List<BizUser> entityList = bizUserMapper.queryList(param);
+    
+    // 封装成分页对象
+    page.setTotal(Long.valueOf(ids.size()));
+    page.setPages(offset++);
+    page.setSize(entityList.size());
+    page.setRecords(entityList);
+    
+    int current = (int)(page.getTotal() / limit);
+    if(page.getTotal() % limit != 0) {
+      current++;
+    }
+    page.setCurrent(current);
+  
+    return page;
+  }
+}
+```
+BizUserMapper.java【Mapper接口】：
+```Java
+package com.mutistic.mybatis.boot.mapper;
+import java.util.List;
+import java.util.Map;
+import org.apache.ibatis.annotations.Mapper;
+import com.mutistic.mybatis.boot.model.BizUser;
+//@Mapper // 标识此类是一个Mapper接口
+public interface BizUserMapper {
+  Long insertEntity(BizUser entity);
+  Long updateEntity(BizUser entity);
+  Long deleteEntity(Long id);
+  BizUser queryById(Long id);
+  List<BizUser> queryList(Map<String, Object> param);
+  List<Long> selectIds(Map<String, Object> param);
+  List<BizUser> queryPage(Map<String, Object> param);
+}
+```
+BizUserMapper.xml【Mapper.xml映射文件】：
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mutistic.mybatis.boot.mapper.BizUserMapper">
+  <resultMap id="resultMap" type="BizUser">
+    <id column="id_" property="id" />
+    <result column="name_" property="name" />
+    <result column="account_" property="account" />
+    <result column="password_" property="password" />
+    <result column="mobile_" property="mobile" />
+    <result column="status_" property="status" />
+    <result column="create_by" property="createBy" />
+    <result column="create_time" property="createTime" />
+    <result column="update_by" property="updateBy" />
+    <result column="update_time" property="updateTime" />
+    <result column="remark_" property="remark" />
+    <result column="enable_" property="enable" />
+    <result column="version_no" property="versionNo" />
+  </resultMap>
+
+  <sql id="column">
+    id_, name_, account_, password_, mobile_,status_,
+    create_by, create_time, update_by, update_time,
+    remark_, enable_, version_no
+  </sql>
+  <sql id="where">
+    <where>
+      <if test="id != null">
+        AND id_ = #{id}
+      </if>
+      <if test="ids != null and !ids.isEmpty()">
+        AND id_ IN
+        <foreach collection="ids" item="key" separator="," open="("
+          close=")">
+          ${key}
+        </foreach>
+      </if>
+      <if test="userId != null">
+        AND user_id = #{userId}
+      </if>
+      <if test="name != null and name != ''">
+        AND name_ = #{name}
+      </if>
+      <if test="account != null and account != ''">
+        AND account_ = #{account}
+      </if>
+      <if test="password != null and password != ''">
+        AND password_ = #{password}
+      </if>
+      <if test="mobile != null and mobile != ''">
+        AND mobile_ = #{mobile}
+      </if>
+      <if test="status != null">
+        AND status_ = #{status}
+      </if>
+      <if test="createBy != null">
+        AND create_by = #{createBy}
+      </if>
+      <if test="createTime != null">
+        AND create_time = #{createTime}
+      </if>
+      <if test="updateBy != null">
+        AND update_by = #{updateBy}
+      </if>
+      <if test="updateTime != null">
+        AND update_time = #{updateTime}
+      </if>
+      <if test="remark != null and remark != ''">
+        AND remark_ = #{remark}
+      </if>
+      <if test="enable != null">
+        AND enable_ = #{enable}
+      </if>
+      <if test="versionNo != null">
+        AND version_no = #{versionNo}
+      </if>
+    </where>
+    <if test="orderBy != null"> order by ${orderBy} </if>
+    <if test="sortAsc != null"> ${sortAsc} </if>
+  </sql>
+
+  <!-- 新增数据 -->
+  <insert id="insertEntity" parameterType="BizUser">
+    INSERT INTO biz_user (
+    <include refid="column" />
+    )
+    VALUES (
+    #{id}, #{name}, #{account}, #{password}, #{mobile},
+    #{status},
+    #{createBy}, #{createTime}, #{updateBy}, #{updateTime},
+    #{remark}, #{enable}, #{versionNo}
+    )
+  </insert>
+  <!-- 修改数据 -->
+  <update id="updateEntity" parameterType="BizUser">
+    UPDATE biz_user
+    <set>
+      <if test="userId != null"> user_id = #{userId},  </if>
+      <if test="name != null"> name_ = #{name}, </if>
+      <if test="account != null"> account_ = #{account}, </if>
+      <if test="password != null"> password_ = #{password}, </if>
+      <if test="mobile != null"> mobile_ = #{mobile}, </if>
+      <if test="status != null"> status_ = #{status}, </if>
+      <if test="createBy != null"> create_by = #{createBy}, </if>
+      <if test="createTime != null"> create_time = #{createTime}, </if>
+      <if test="updateBy != null"> update_by = #{updateBy}, </if>
+      <if test="updateTime != null"> update_time = #{updateTime}, </if>
+      <if test="remark != null"> remark_ = #{remark}, </if>
+      <if test="enable != null"> enable_ = #{enable}, </if>
+      <if test="versionNo != null"> version_no = #{versionNo}, </if>
+    </set>
+    WHERE id_ = #{id}
+  </update>
+  <!-- 删除数据 -->
+  <delete id="deleteEntity">
+    DELETE FROM biz_user WHERE id_ = #{id}
+  </delete>
+
+  <!-- 根据ID查询数据 -->
+  <select id="queryById" parameterType="Long"
+    resultMap="resultMap">
+    SELECT
+    <include refid="column" />
+    FROM biz_user
+    WHERE id_ = #{id}
+  </select>
+
+  <!-- 查询数据集合 -->
+  <select id="queryList" parameterType="Map" resultMap="resultMap">
+    SELECT
+    <include refid="column" />
+    FROM biz_user
+    <include refid="where" />
+    <if test="limit != null"> LIMIT ${limit} </if>
+    <if test="offset != null"> OFFSET ${offset} </if>
+  </select>
+  <!-- 查询数据id集合 -->
+  <select id="selectIds" parameterType="Map" resultType="Long">
+    SELECT id_ FROM biz_user
+    <include refid="where" />
+  </select>
+</mapper>
+```
+BizUser.java【Model表实体】：
+```Java
+package com.mutistic.mybatis.boot.model;
+@SuppressWarnings("serial")
+public class BizUser extends BaseModel {
+  /** 用户名 */
+  private String name;
+  /** 账号 */
+  private String account;
+  /** 密码 */
+  private String password;
+  /** 手机号 */
+  private String mobile;
+  /** 用户状态：0-认证中，1-正常用户，2-冻结 */
+  private Integer status;
+  // get/set
+}
+```
+BizUserController.java【Model父类】：
+```Java
+package com.mutistic.mybatis.boot.model;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+@SuppressWarnings("serial")
+public class BaseModel implements Serializable {
+  /** 主键 */
+  private Long id;
+  /** 主键集合 */
+  private List<Long> ids;
+  /** 创建人 */
+  private Long createBy;
+  /** 创建时间 */
+  private Date createTime;
+  /** 修改人 */
+  private Long updateBy;
+  /** 修改时间 */
+  private Date updateTime;
+  /** 是否逻辑删除：0-未删除，1-已删除 */
+  private Integer enable;
+  /** 备注 */
+  private String remark;
+  /**  版本号 */
+  private Integer versionNo;
+  /** 排序字段 */
+  private String orderBy;
+  /** 排序规则 */
+  private String sortAsc;
+  // get/set
+}
+```
+
+---
 ### <a id="a_notes">[Notes](https://github.com/mutistic/mutistic.mybatis/blob/master/com.mutistic.mybatis/notes)</a> <a href="#top">last</a> <a href="#a_catalogue">next</a>
+[Postman-测试请求](https://github.com/mutistic/mutistic.mybatis/blob/master/com.mutistic.mybatis/notes/Postman_SpringBoot-MyBatis.json)  
 [Pit1：mybatis-config.xml问题集](https://github.com/mutistic/mutistic.mybatis/blob/master/com.mutistic.mybatis/notes/pit/Pit1-mybatis-config.xml%E9%97%AE%E9%A2%98%E9%9B%86.doc)  
 [Pit2：mapper.xml问题集](https://github.com/mutistic/mutistic.mybatis/blob/master/com.mutistic.mybatis/notes/pit/Pit2-mapper.xml%E9%97%AE%E9%A2%98%E9%9B%86.doc)  
+[Pit3：Pit3-SpringBoot整合Mybatis问题集](https://github.com/mutistic/mutistic.mybatis/blob/master/com.mutistic.mybatis/notes/pit/Pit2-mapper.xml%E9%97%AE%E9%A2%98%E9%9B%86.doc)
 
 ---
 <a id="a_down"></a>  

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper
+	namespace="com.mutistic.mybatis.boot.mapper.BizUserMapper">
+	<resultMap id="resultMap" type="BizUser">
+		<id column="id_" property="id" />
+		<result column="name_" property="name" />
+		<result column="account_" property="account" />
+		<result column="password_" property="password" />
+		<result column="mobile_" property="mobile" />
+		<result column="status_" property="status" />
+		<result column="create_by" property="createBy" />
+		<result column="create_time" property="createTime" />
+		<result column="update_by" property="updateBy" />
+		<result column="update_time" property="updateTime" />
+		<result column="remark_" property="remark" />
+		<result column="enable_" property="enable" />
+		<result column="version_no" property="versionNo" />
+	</resultMap>
+
+	<sql id="column">
+		id_, name_, account_, password_, mobile_,status_,
+		create_by, create_time, update_by, update_time,
+		remark_, enable_,
+		version_no
+	</sql>
+	<sql id="where">
+		<where>
+			<if test="id != null">
+				AND id_ = #{id}
+			</if>
+			<if test="ids != null and !ids.isEmpty()">
+				AND id_ IN
+				<foreach collection="ids" item="key" separator="," open="("
+					close=")">
+					${key}
+				</foreach>
+			</if>
+			<if test="userId != null">
+				AND user_id = #{userId}
+			</if>
+			<if test="name != null and name != ''">
+				AND name_ = #{name}
+			</if>
+			<if test="account != null and account != ''">
+				AND account_ = #{account}
+			</if>
+			<if test="password != null and password != ''">
+				AND password_ = #{password}
+			</if>
+			<if test="mobile != null and mobile != ''">
+				AND mobile_ = #{mobile}
+			</if>
+			<if test="status != null">
+				AND status_ = #{status}
+			</if>
+			<if test="createBy != null">
+				AND create_by = #{createBy}
+			</if>
+			<if test="createTime != null">
+				AND create_time = #{createTime}
+			</if>
+			<if test="updateBy != null">
+				AND update_by = #{updateBy}
+			</if>
+			<if test="updateTime != null">
+				AND update_time = #{updateTime}
+			</if>
+			<if test="remark != null and remark != ''">
+				AND remark_ = #{remark}
+			</if>
+			<if test="enable != null">
+				AND enable_ = #{enable}
+			</if>
+			<if test="versionNo != null">
+				AND version_no = #{versionNo}
+			</if>
+		</where>
+		<if test="orderBy != null"> order by ${orderBy} </if>
+		<if test="sortAsc != null"> ${sortAsc} </if>
+	</sql>
+
+	<!-- 新增数据 -->
+	<insert id="insertEntity" parameterType="BizUser">
+		INSERT INTO biz_user (
+		<include refid="column" />
+		)
+		VALUES (
+		#{id}, #{name}, #{account}, #{password}, #{mobile},
+		#{status},
+		#{createBy}, #{createTime}, #{updateBy}, #{updateTime},
+		#{remark}, #{enable}, #{versionNo}
+		)
+	</insert>
+	<!-- 修改数据 -->
+	<update id="updateEntity" parameterType="BizUser">
+		UPDATE biz_user
+		<set>
+			<if test="userId != null"> user_id = #{userId},	</if>
+			<if test="name != null"> name_ = #{name}, </if>
+			<if test="account != null"> account_ = #{account}, </if>
+			<if test="password != null"> password_ = #{password}, </if>
+			<if test="mobile != null"> mobile_ = #{mobile}, </if>
+			<if test="status != null"> status_ = #{status}, </if>
+			<if test="createBy != null"> create_by = #{createBy}, </if>
+			<if test="createTime != null"> create_time = #{createTime}, </if>
+			<if test="updateBy != null"> update_by = #{updateBy}, </if>
+			<if test="updateTime != null"> update_time = #{updateTime}, </if>
+			<if test="remark != null"> remark_ = #{remark}, </if>
+			<if test="enable != null"> enable_ = #{enable}, </if>
+			<if test="versionNo != null"> version_no = #{versionNo}, </if>
+		</set>
+		WHERE id_ = #{id}
+	</update>
+	<!-- 删除数据 -->
+	<delete id="deleteEntity">
+		DELETE FROM biz_user WHERE id_ = #{id}
+	</delete>
+
+	<!-- 根据ID查询数据 -->
+	<select id="queryById" parameterType="Long"
+		resultMap="resultMap">
+		SELECT
+		<include refid="column" />
+		FROM biz_user
+		WHERE id_ = #{id}
+	</select>
+
+	<!-- 查询数据集合 -->
+	<select id="queryList" parameterType="Map" resultMap="resultMap">
+		SELECT
+		<include refid="column" />
+		FROM biz_user
+		<include refid="where" />
+		<if test="limit != null"> LIMIT ${limit} </if>
+		<if test="offset != null"> OFFSET ${offset} </if>
+	</select>
+	<!-- 查询数据id集合 -->
+	<select id="selectIds" parameterType="Map" resultType="Long">
+		SELECT id_ FROM biz_user
+		<include refid="where" />
+	</select>
+	
+</mapper>
+  
