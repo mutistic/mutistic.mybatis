@@ -538,76 +538,36 @@ SelectMapper.xml：
   </sql>
   <!-- 实体动态条件 -->
   <sql id="entityIf">
-    <if test="id != null">
-      AND id_ = #{id}
+    <if test="id != null"> AND id_ = #{id} </if>
+    <!-- <if test="ids != null and ids.size() > 0"> -->
+    <if test="ids != null and !ids.isEmpty()"> AND id_ IN
+      <foreach collection="ids" item="key" separator="," open="(" close=")"> ${key} </foreach>
     </if>
-    <if test="ids != null and !ids.isEmpty()">
-      <!-- <if test="ids != null and ids.size() > 0"> -->
-      AND id_ IN
-      <foreach collection="ids" item="key" separator="," open="("
-        close=")">
-        ${key}
-      </foreach>
-    </if>
-    <if test="userId != null">
-      AND user_id = #{userId}
-    </if>
-    <if test="consigneeName != null and consigneeName != ''">
-      AND consignee_name = #{consigneeName}
-    </if>
-    <if test="consigneeMobile != null and consigneeMobile != ''">
-      AND consignee_mobile = #{consigneeMobile}
-    </if>
-    <if test="consigneeAddress != null and consigneeAddress != ''">
-      AND consignee_address = #{consigneeAddress}
-    </if>
-    <if test="provinceCode != null and provinceCode != ''">
-      AND province_code = #{provinceCode}
-    </if>
-    <if test="cityCode != null and cityCode != ''">
-      AND city_code = #{cityCode}
-    </if>
-    <if test="countyCode != null and countyCode != ''">
-      AND county_code = #{countyCode}
-    </if>
-    <if test="isDefault != null"> AND is_default = #{isDefault}
-    </if>
-    <if test="createBy != null">
-      AND create_by = #{createBy}
-    </if>
-    <if test="createTime != null">
-      AND create_time = #{createTime}
-    </if>
-    <if test="updateBy != null">
-      AND update_by = #{updateBy}
-    </if>
-    <if test="updateTime != null">
-      AND update_time = #{updateTime}
-    </if>
-    <if test="remark != null and remark != ''">
-      AND remark_ = #{remark}
-    </if>
-    <if test="enable != null">
-      AND enable_ = #{enable}
-    </if>
-    <if test="versionNo != null">
-      AND version_no = #{versionNo}
-    </if>
+    <if test="userId != null"> AND user_id = #{userId} </if>
+    <if test="consigneeName != null and consigneeName != ''">  AND consignee_name = #{consigneeName} </if>
+    <if test="consigneeMobile != null and consigneeMobile != ''"> AND consignee_mobile = #{consigneeMobile} </if>
+    <if test="consigneeAddress != null and consigneeAddress != ''"> AND consignee_address = #{consigneeAddress} </if>
+    <if test="provinceCode != null and provinceCode != ''"> AND province_code = #{provinceCode} </if>
+    <if test="cityCode != null and cityCode != ''"> AND city_code = #{cityCode} </if>
+    <if test="countyCode != null and countyCode != ''"> AND county_code = #{countyCode} </if>
+    <if test="isDefault != null"> AND is_default = #{isDefault} </if>
+    <if test="createBy != null"> AND create_by = #{createBy} </if>
+    <if test="createTime != null"> AND create_time = #{createTime} </if>
+    <if test="updateBy != null"> AND update_by = #{updateBy} </if>
+    <if test="updateTime != null"> AND update_time = #{updateTime} </if>
+    <if test="remark != null and remark != ''"> AND remark_ = #{remark} </if>
+    <if test="enable != null"> AND enable_ = #{enable} </if>
+    <if test="versionNo != null"> AND version_no = #{versionNo} </if>
   </sql>
 
   <!-- 根据ID查询数据 -->
   <select id="queryById" parameterType="java.lang.Long" resultMap="resultMap">
-    SELECT
-      <include refid="entityColumn"></include>
-    FROM biz_buy_address
-      WHERE id_ = #{id}
+    SELECT <include refid="entityColumn"></include> FROM biz_buy_address  WHERE id_ = #{id}
   </select>
 
   <!-- 实体参数Where -->
   <sql id="entityWhere">
-    <where>
-      <include refid="entityIf"></include>
-    </where>
+    <where> <include refid="entityIf"></include> </where>
     <if test="orderBy != null"> order by ${orderBy} </if>
     <if test="sortAsc != null"> ${sortAsc} </if>
   </sql>
@@ -762,51 +722,21 @@ UpdateMapper.xml：
     UPDATE biz_buy_address
     <!-- <trim prefix="SET" suffixOverrides=","></trim> -->
     <set>
-      <if test="userId != null">
-    user_id = #{userId},
-      </if>
-      <if test="consigneeName != null">
-    consignee_name = #{consigneeName},
-      </if>
-      <if test="consigneeMobile != null">
-    consignee_mobile = #{consigneeMobile},
-      </if>
-      <if test="consigneeAddress != null">
-    consignee_address = #{consigneeAddress},
-      </if>
-      <if test="provinceCode != null">
-    province_code = #{provinceCode},
-      </if>
-      <if test="cityCode != null">
-    city_code = #{cityCode},
-      </if>
-      <if test="countyCode != null">
-    county_code = #{countyCode},
-      </if>
-      <if test="isDefault != null">
-    is_default = #{isDefault},
-      </if>
-      <if test="createBy != null">
-    create_by = #{createBy},
-      </if>
-      <if test="createTime != null">
-    create_time = #{createTime},
-      </if>
-      <if test="updateBy != null">
-    update_by = #{updateBy},
-      </if>
-      <if test="updateTime != null">
-    update_time = #{updateTime},
-      </if>
-      <if test="remark != null">
-    remark_ = #{remark},
-      </if>
-      <if test="enable != null">
-    enable_ = #{enable},
-      </if>
-      <if test="versionNo != null">
-    version_no = #{versionNo},
-      </if>
+      <if test="userId != null"> user_id = #{userId}, </if>
+      <if test="consigneeName != null"> consignee_name = #{consigneeName}, </if>
+      <if test="consigneeMobile != null"> consignee_mobile = #{consigneeMobile}, </if>
+      <if test="consigneeAddress != null"> consignee_address = #{consigneeAddress}, </if>
+      <if test="provinceCode != null"> province_code = #{provinceCode}, </if>
+      <if test="cityCode != null"> city_code = #{cityCode}, </if>
+      <if test="countyCode != null"> county_code = #{countyCode}, </if>
+      <if test="isDefault != null"> is_default = #{isDefault}, </if>
+      <if test="createBy != null"> create_by = #{createBy}, </if>
+      <if test="createTime != null"> create_time = #{createTime}, </if>
+      <if test="updateBy != null"> update_by = #{updateBy}, </if>
+      <if test="updateTime != null"> update_time = #{updateTime}, </if>
+      <if test="remark != null"> remark_ = #{remark}, </if>
+      <if test="enable != null"> enable_ = #{enable}, </if>
+      <if test="versionNo != null"> version_no = #{versionNo}, </if>
     </set>
     WHERE id_ = #{id}
   </update>
@@ -1058,7 +988,7 @@ OneToOneMapper.xml：
   </resultMap>
   <select id="queryByResultMap" parameterType="java.lang.Long" resultMap="ResultMap">
     SELECT 
-        bizUser.id_, bizUser.name_, bizUser.account_, bizUser.password_, bizUser.mobile_,
+      bizUser.id_, bizUser.name_, bizUser.account_, bizUser.password_, bizUser.mobile_,
       bizUser.create_by, bizUser.create_time, bizUser.update_by, bizUser.update_time,
       bizUser.remark_, bizUser.enable_, bizUser.version_no,
       bizAddress.id_, bizAddress.user_id, bizAddress.consignee_name, bizAddress.consignee_mobile, bizAddress.consignee_address,
@@ -1285,12 +1215,8 @@ DynamicMapper.xml：
         <when test="statusType=2"> AND status_ IN (0,1)</when>
         <otherwise>AND status_ IN (1,2) </otherwise>
       </choose>
-      <if test="statusList != null">
-        AND status_ IN
-        <foreach collection="statusList" item="key" separator=","
-          open="(" close=")">
-          ${key}
-        </foreach>
+      <if test="statusList != null"> AND status_ IN
+        <foreach collection="statusList" item="key" separator="," open="(" close=")"> ${key} </foreach>
       </if>
     </where>
   </select>
@@ -2298,55 +2224,23 @@ BizUserMapper.xml【Mapper.xml映射文件】：
   </sql>
   <sql id="where">
     <where>
-      <if test="id != null">
-        AND id_ = #{id}
+      <if test="id != null"> AND id_ = #{id} </if>
+      <if test="ids != null and !ids.isEmpty()"> AND id_ IN 
+        <foreach collection="ids" item="key" separator="," open="("  close=")"> ${key} </foreach>
       </if>
-      <if test="ids != null and !ids.isEmpty()">
-        AND id_ IN
-        <foreach collection="ids" item="key" separator="," open="("
-          close=")">
-          ${key}
-        </foreach>
-      </if>
-      <if test="userId != null">
-        AND user_id = #{userId}
-      </if>
-      <if test="name != null and name != ''">
-        AND name_ = #{name}
-      </if>
-      <if test="account != null and account != ''">
-        AND account_ = #{account}
-      </if>
-      <if test="password != null and password != ''">
-        AND password_ = #{password}
-      </if>
-      <if test="mobile != null and mobile != ''">
-        AND mobile_ = #{mobile}
-      </if>
-      <if test="status != null">
-        AND status_ = #{status}
-      </if>
-      <if test="createBy != null">
-        AND create_by = #{createBy}
-      </if>
-      <if test="createTime != null">
-        AND create_time = #{createTime}
-      </if>
-      <if test="updateBy != null">
-        AND update_by = #{updateBy}
-      </if>
-      <if test="updateTime != null">
-        AND update_time = #{updateTime}
-      </if>
-      <if test="remark != null and remark != ''">
-        AND remark_ = #{remark}
-      </if>
-      <if test="enable != null">
-        AND enable_ = #{enable}
-      </if>
-      <if test="versionNo != null">
-        AND version_no = #{versionNo}
-      </if>
+      <if test="userId != null"> AND user_id = #{userId} </if>
+      <if test="name != null and name != ''"> AND name_ = #{name}  </if>
+      <if test="account != null and account != ''"> AND account_ = #{account} </if>
+      <if test="password != null and password != ''"> AND password_ = #{password} </if>
+      <if test="mobile != null and mobile != ''"> AND mobile_ = #{mobile} </if>
+      <if test="status != null">  AND status_ = #{status} </if>
+      <if test="createBy != null"> AND create_by = #{createBy} </if>
+      <if test="createTime != null"> AND create_time = #{createTime} </if>
+      <if test="updateBy != null"> AND update_by = #{updateBy} </if>
+      <if test="updateTime != null"> AND update_time = #{updateTime} </if>
+      <if test="remark != null and remark != ''"> AND remark_ = #{remark} </if>
+      <if test="enable != null"> AND enable_ = #{enable} </if>
+      <if test="versionNo != null"> AND version_no = #{versionNo} </if>
     </where>
     <if test="orderBy != null"> order by ${orderBy} </if>
     <if test="sortAsc != null"> ${sortAsc} </if>
