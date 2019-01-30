@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mutistic.mybatis.generate.mapper.BizUserMapper">
+  <resultMap id="BaseResultMap" type="com.mutistic.mybatis.generate.model.BizUser">
+    <id column="id_" jdbcType="BIGINT" property="id" />
+    <result column="name_" jdbcType="VARCHAR" property="name" />
+    <result column="account_" jdbcType="VARCHAR" property="account" />
+    <result column="password_" jdbcType="VARCHAR" property="password" />
+    <result column="mobile_" jdbcType="VARCHAR" property="mobile" />
+    <result column="status_" jdbcType="BIT" property="status" />
+    <result column="create_by" jdbcType="BIGINT" property="createBy" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_by" jdbcType="BIGINT" property="updateBy" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="remark_" jdbcType="VARCHAR" property="remark" />
+    <result column="enable_" jdbcType="TINYINT" property="enable" />
+    <result column="version_no" jdbcType="INTEGER" property="versionNo" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id_, name_, account_, password_, mobile_, status_, create_by, create_time, update_by, 
+    update_time, remark_, enable_, version_no
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from biz_user
+    where id_ = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from biz_user
+    where id_ = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.mutistic.mybatis.generate.model.BizUser">
+    insert into biz_user (id_, name_, account_, 
+      password_, mobile_, status_, 
+      create_by, create_time, update_by, 
+      update_time, remark_, enable_, 
+      version_no)
+    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{account,jdbcType=VARCHAR}, 
+      #{password,jdbcType=VARCHAR}, #{mobile,jdbcType=VARCHAR}, #{status,jdbcType=BIT}, 
+      #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR}, #{enable,jdbcType=TINYINT}, 
+      #{versionNo,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.mutistic.mybatis.generate.model.BizUser">
+    insert into biz_user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id_,
+      </if>
+      <if test="name != null">
+        name_,
+      </if>
+      <if test="account != null">
+        account_,
+      </if>
+      <if test="password != null">
+        password_,
+      </if>
+      <if test="mobile != null">
+        mobile_,
+      </if>
+      <if test="status != null">
+        status_,
+      </if>
+      <if test="createBy != null">
+        create_by,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateBy != null">
+        update_by,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="remark != null">
+        remark_,
+      </if>
+      <if test="enable != null">
+        enable_,
+      </if>
+      <if test="versionNo != null">
+        version_no,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="account != null">
+        #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null">
+        #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=BIT},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        #{updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="enable != null">
+        #{enable,jdbcType=TINYINT},
+      </if>
+      <if test="versionNo != null">
+        #{versionNo,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.mutistic.mybatis.generate.model.BizUser">
+    update biz_user
+    <set>
+      <if test="name != null">
+        name_ = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="account != null">
+        account_ = #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        password_ = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null">
+        mobile_ = #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status_ = #{status,jdbcType=BIT},
+      </if>
+      <if test="createBy != null">
+        create_by = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        update_by = #{updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null">
+        remark_ = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="enable != null">
+        enable_ = #{enable,jdbcType=TINYINT},
+      </if>
+      <if test="versionNo != null">
+        version_no = #{versionNo,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id_ = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.mutistic.mybatis.generate.model.BizUser">
+    update biz_user
+    set name_ = #{name,jdbcType=VARCHAR},
+      account_ = #{account,jdbcType=VARCHAR},
+      password_ = #{password,jdbcType=VARCHAR},
+      mobile_ = #{mobile,jdbcType=VARCHAR},
+      status_ = #{status,jdbcType=BIT},
+      create_by = #{createBy,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=BIGINT},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      remark_ = #{remark,jdbcType=VARCHAR},
+      enable_ = #{enable,jdbcType=TINYINT},
+      version_no = #{versionNo,jdbcType=INTEGER}
+    where id_ = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

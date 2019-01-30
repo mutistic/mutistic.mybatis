@@ -25,7 +25,7 @@ public class SqlSeesionUtil {
 	/** 配置文件相对根路径 */
 	private final static String MYBATIS_CONFIG_XML_SRC_URL = "src/main/java/" + MYBATIS_CONFIG_XML;
 	/** 配置文件编译后全路径 */
-	private final static String MYBATIS_CONFIG_XML_CLASSES_PATH = Thread.class.getResource("/") + MYBATIS_CONFIG_XML;
+	private final static String MYBATIS_CONFIG_XML_CLASSES_PATH = Thread.class.getResource("/") + MYBATIS_CONFIG_XML_FILE_URL;
 	/** 配置文件编译后可用路径 */
 	private final static String MYBATIS_CONFIG_XML_CLASSES_URL = MYBATIS_CONFIG_XML_CLASSES_PATH.replace("file:/", "");
 	/** SqlSessionFactory工厂类 */
